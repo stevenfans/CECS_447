@@ -1,5 +1,7 @@
 //Rosswell Tiongco
 //016091762
+//Steven Phan
+//014358810
 
 // This is your first program to run on the LaunchPad
 // You will run this program without modification as your Lab 2
@@ -37,6 +39,7 @@
 #define GPIO_PORTF_AMSEL_R      (*((volatile unsigned long *)0x40025528))
 #define GPIO_PORTF_PCTL_R       (*((volatile unsigned long *)0x4002552C))
 #define SYSCTL_RCGC2_R          (*((volatile unsigned long *)0x400FE108))
+#define ON_BOARD_LED_LIGHT      (*((volatile unsigned long *)0x40025038))
 
 // 2. Declarations Section
 //   Global Variables
@@ -60,14 +63,16 @@ void Systick_Wait_Seconds(unsigned long counter){
 	// 3. Subroutines Section
 // MAIN: Mandatory for a C Program to be executable
 int main(void){    
-	//unsigned long second = 4; // double the 500 ms
+
 	unsigned int time = 1; 
 	SysTick_Init();
 	TExaS_Init(SW_PIN_PF40,LED_PIN_PF321); // this initializes the TExaS grader lab 2
   PortF_Init();        // Call initialization of port PF4 PF2  
 	
-	GPIO_PORTF_DATA_R = 0x04;
-  EnableInterrupts();  // The grader uses interrupts
+	//GPIO_PORTF_DATA_R = 0x04;
+	ON_BOARD_LED_LIGHT = 0x04; 
+	
+  //EnableInterrupts();  // The grader uses interrupts
 	
   while(1){
 		In = GPIO_PORTF_DATA_R&0x10; // read PF4 into In
@@ -77,12 +82,7 @@ int main(void){
 		}
 		//SysTick_half(second);
 		test(time); 
-		GPIO_PORTF_DATA_R ^= 0x04;
-		
-//		SysTick_half(2);
-//    GPIO_PORTF_DATA_R = 0x04;    // LED is blue
-//	  SysTick_half(2);
-//		GPIO_PORTF_DATA_R = 0x00;    // LED is blue
+		ON_BOARD_LED_LIGHT ^= 0x04;
   }
 }
 
@@ -113,14 +113,3 @@ void PortF_Init(void){ volatile unsigned long delay;
 // sky blue -GB    0x0C
 // white    RGB    0x0E
 // pink     R-B    0x06
-
-// Subroutine to wait 0.1 sec
-// Inputs: None
-// Outputs: None
-// Notes: ...
-void Delay(void){unsigned long volatile time;
-  time = 2*727240*200/91;  // 0.1sec
-  while(time){
-		time--;
-  }
-}

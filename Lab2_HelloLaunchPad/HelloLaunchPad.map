@@ -537,7 +537,7 @@ Image Symbol Table
     SysTick_Wait                             0x00000705   Thumb Code    32  systick.o(i.SysTick_Wait)
     TExaS_Init                               0x00000725   Thumb Code   178  texas.o(i.TExaS_Init)
     Timer5A_Handler                          0x0000083d   Thumb Code   510  texas.o(i.Timer5A_Handler)
-    main                                     0x00000a6d   Thumb Code    72  main.o(i.main)
+    main                                     0x00000a6d   Thumb Code    70  main.o(i.main)
     test                                     0x00000ac1   Thumb Code    22  systick.o(i.test)
     Port                                     0x00000adc   Data          24  texas.o(.constdata)
     InputPortMsg                             0x00000af4   Data          40  texas.o(.constdata)
@@ -691,13 +691,13 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
-       180         32          0         16          0       2680   main.o
+       180         34          0         16          0       2680   main.o
        692        632          0          0       1024        972   startup.o
         84          6          0          0          0       1393   systick.o
       1544        236       2032         44        628      14151   texas.o
 
     ----------------------------------------------------------------------
-      2500        906       2064         60       1656      19196   Object Totals
+      2500        908       2064         60       1656      19196   Object Totals
          0          0         32          0          0          0   (incl. Generated)
          0          0          0          0          4          0   (incl. Padding)
 
@@ -746,9 +746,9 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-      2780        922       2064         60       1756      19100   Grand Totals
-      2780        922       2064         60       1756      19100   ELF Image Totals
-      2780        922       2064         60          0          0   ROM Totals
+      2780        924       2064         60       1756      19100   Grand Totals
+      2780        924       2064         60       1756      19100   ELF Image Totals
+      2780        924       2064         60          0          0   ROM Totals
 
 ==============================================================================
 
