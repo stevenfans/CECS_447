@@ -77,3 +77,10 @@ void SysTick_half(unsigned long delay){
   }
 }
 
+void test(unsigned long times){
+	unsigned long i; 
+	for(i= 0; i <times;i++){
+		SysTick_Wait(16000000); // should be 1 second or 1000ms
+	}
+}
+
