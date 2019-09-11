@@ -66,6 +66,8 @@
 #define NVIC_ST_CTRL_R          (*((volatile unsigned long *)0xE000E010))
 #define NVIC_ST_RELOAD_R        (*((volatile unsigned long *)0xE000E014))
 #define NVIC_ST_CURRENT_R       (*((volatile unsigned long *)0xE000E018))
+	
+#define ON_BOARD_LED						(*((volatile unsigned long *)0x40025038))
 
 // 2. Declarations Section
 //   Global Variables
@@ -102,15 +104,13 @@ void Systick_1_Second(int seconds){
 int main(void){
 	Counts = 0;
 	FallingEdges = 1;
-  //PortF_Init();        // Call initialization of port PF4 PF2    
-	SysTick_Init(16000000);        // initialize SysTick timer
+  //PortF_Init();        						// Call initialization of port PF4 PF2    
+	SysTick_Init(16000000);        		//initialize SysTick timer
 	EdgeCounter_Init();
-	EnableInterrupts();           // * AFTER inits, should be global
+	EnableInterrupts();          		 	//AFTER inits, should be global
   while(1){
-    Systick_1_Second(FallingEdges);
-    GPIO_PORTF_DATA_R = 0x04;    // LED is blue
-    Systick_1_Second(FallingEdges);
-		GPIO_PORTF_DATA_R = 0x00;    // LED is off
+    Systick_1_Second(FallingEdges);	//delay using systick
+		ON_BOARD_LED ^= 0x04; 					// toggle blue led on tm4c
   }
 }
 
