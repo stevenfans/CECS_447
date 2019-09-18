@@ -83,6 +83,7 @@ void EdgeCounter_Init(void);
 volatile unsigned long Counts = 0;
 volatile unsigned long FallingEdges = 0;
 
+// TODO: INCLUDE PLL 	
 
 void SysTick_Init(unsigned long period){
   NVIC_ST_CTRL_R = 0;         // disable SysTick during setup
@@ -116,6 +117,32 @@ int main(void){
   }
 }
 
+void sawtoothWave(int delay_time){
+	unsigned int i; 
+	for (i = 0; i < 256; i++){
+		GPIO_PORTB_DATA_R +=1 ; 
+		//TODO: INCLUDE DELAY
+	}
+}
+
+void triangleWave(int delay_time){
+	unsigned int i; 
+	for (i = 0; i < 256; i++){
+		GPIO_PORTB_DATA_R += 1; 
+		//TODO: INCLUDE DELAY
+	}
+	for (i = 256; i>0; i--){
+		GPIO_PORTB_DATA_R -= 1; 
+		//TODO: INCLUDE DELAY
+	}
+}
+
+void squareWave (int delay_time){
+	GPIO_PORTB_DATA_R = 0xFF; 
+	//TODO: INCLUDE DELAY
+	GPIO_PORTB_DATA_R = 0x00; 
+	//TODO: INCLUDE DELAY
+}
 
 // Color    LED(s) PortF
 // dark     ---    0
