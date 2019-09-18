@@ -80,6 +80,9 @@ unsigned long Out; // outputs to PF3,PF2,PF1 (multicolor LED)
 void EnableInterrupts(void);
 void WaitForInterrupt(void);  // low power mode
 void EdgeCounter_Init(void);
+void sawtoothWave(int delay);
+void triangleWave(int delay); 
+void squareWave(int delay); 
 volatile unsigned long Counts = 0;
 volatile unsigned long FallingEdges = 0;
 
@@ -117,7 +120,7 @@ int main(void){
   }
 }
 
-void sawtoothWave(int delay_time){
+void sawtoothWave(int delay){
 	unsigned int i; 
 	for (i = 0; i < 256; i++){
 		GPIO_PORTB_DATA_R +=1 ; 
@@ -125,7 +128,7 @@ void sawtoothWave(int delay_time){
 	}
 }
 
-void triangleWave(int delay_time){
+void triangleWave(int delay){
 	unsigned int i; 
 	for (i = 0; i < 256; i++){
 		GPIO_PORTB_DATA_R += 1; 
@@ -137,7 +140,7 @@ void triangleWave(int delay_time){
 	}
 }
 
-void squareWave (int delay_time){
+void squareWave (int delay){
 	GPIO_PORTB_DATA_R = 0xFF; 
 	//TODO: INCLUDE DELAY
 	GPIO_PORTB_DATA_R = 0x00; 
