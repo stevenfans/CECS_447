@@ -1,0 +1,4 @@
+Dependencies for Project 'Lab2', Target 'HelloLaunchPad': (DO NOT MODIFY !)
+F (.\main.c)(0x5D797F25)(-c --cpu Cortex-M4 -D__EVAL -g -O0 --apcs=interwork --split_sections --signed_chars -I .. -I ..\..\..-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Luminary-D__UVISION_VERSION="527" -Drvmdk -DPART_LM4F120H5QR-o .\main.o --omf_browse .\main.crf --depend .\main.d)
+F (.\startup.s)(0x5D797E7C)(--cpu Cortex-M4 --pd "__EVAL SETA 1" -g --apcs=interwork -IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Luminary--pd "__UVISION_VERSION SETA 527"--list .\startup.lst --xref -o .\startup.o --depend .\startup.d)
+F (.\texas.o)(0x5D797E7C)()
