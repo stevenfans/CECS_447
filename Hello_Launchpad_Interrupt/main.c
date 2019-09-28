@@ -1,3 +1,9 @@
+<<<<<<< HEAD
+#include "tm4c123gh6pm.h"	
+#define ON_BOARD_LED						(*((volatile unsigned long *)0x40025038))
+#include "PLL.h"
+#include "SysTick.h"
+=======
 // This is your first program to run on the LaunchPad
 // You will run this program without modification as your Lab 2
 // If the left switch SW1 is 
@@ -67,6 +73,7 @@
 #define NVIC_ST_RELOAD_R        (*((volatile unsigned long *)0xE000E014))
 #define NVIC_ST_CURRENT_R       (*((volatile unsigned long *)0xE000E018))
 
+>>>>>>> f5d9ce207b37f8e9af71f3927fa695fcc59e2f16
 // 2. Declarations Section
 //   Global Variables
 unsigned long In;  // input from PF4
@@ -76,31 +83,112 @@ unsigned long Out; // outputs to PF3,PF2,PF1 (multicolor LED)
 void EnableInterrupts(void);
 void WaitForInterrupt(void);  // low power mode
 void EdgeCounter_Init(void);
+<<<<<<< HEAD
+void sawtoothWave(int delay);
+void triangleWave(int delay); 
+void squareWave(int delay); 
+void Init_PortB(void); 
+=======
+>>>>>>> f5d9ce207b37f8e9af71f3927fa695fcc59e2f16
 volatile unsigned long Counts = 0;
 volatile unsigned long FallingEdges = 0;
 
 
-void SysTick_Init(unsigned long period){
-  NVIC_ST_CTRL_R = 0;         // disable SysTick during setup
-  NVIC_ST_RELOAD_R = period-1;// reload value
-  NVIC_ST_CURRENT_R = 0;      // any write to current clears it
-  NVIC_SYS_PRI3_R = (NVIC_SYS_PRI3_R&0x00FFFFFF)|0x40000000; // priority 2
-                              // enable SysTick with core clock and interrupts
-  NVIC_ST_CTRL_R = 0x07;
-}
+//void SysTick_Init(unsigned long period){
+//  NVIC_ST_CTRL_R = 0;         // disable SysTick during setup
+//  NVIC_ST_RELOAD_R = period-1;// reload value
+//  NVIC_ST_CURRENT_R = 0;      // any write to current clears it
+//  NVIC_SYS_PRI3_R = (NVIC_SYS_PRI3_R&0x00FFFFFF)|0x40000000; // priority 2
+//                              // enable SysTick with core clock and interrupts
+//  NVIC_ST_CTRL_R = 0x07;
+//}
 
 
-void Systick_1_Second(int seconds){
-	unsigned long i;
-	for (i = 0; i <= seconds;  i++){
-		WaitForInterrupt();
-	}
-}
+//void Systick_1_Second(int seconds){
+//	unsigned long i;
+//	for (i = 0; i <= seconds;  i++){
+//		WaitForInterrupt();
+//	}
+//}
 
 	// 3. Subroutines Section
 // MAIN: Mandatory for a C Program to be executable
 int main(void){
+	
+	//unsigned int i;
 	Counts = 0;
+<<<<<<< HEAD
+  //PortF_Init();        						// Call initialization of port PF4 PF2    
+	//SysTick_Init(16000000);        		//initialize SysTick timer
+	EdgeCounter_Init();
+	SysTick_Init();
+	Init_PortB();
+	GPIO_PORTF_DATA_R = 0x02;
+	EnableInterrupts();          		 	//AFTER inits, should be global 	
+	PLL_Init();
+  while(1){
+    //Systick_1_Second(FallingEdges);	//delay using systick
+		//ON_BOARD_LED ^= 0x04; 					// toggle blue led on tm4c
+		//GPIO_PORTF_DATA_R = 0x02; 
+		//sawtoothWave(5150);
+		squareWave(660000);
+		//squareWave(10000); 
+		//triangleWave(0); 
+//		switch(FallingEdges){
+//		case 1:
+//			GPIO_PORTF_DATA_R = 0x02; // Red
+//			sawtoothWave(0);
+//			SysTick_Wait(3255); 
+//			break;
+//		case 2:
+//			GPIO_PORTF_DATA_R = 0x04; // Blue
+//			triangleWave(0);
+//			break;
+//		case 3:
+//			GPIO_PORTF_DATA_R = 0x08; // Green
+//			FallingEdges = 0;
+//			squareWave(0);
+//			break;
+//	}
+  }
+}
+
+void sawtoothWave(int delay){
+	unsigned int i; 
+	for (i = 0; i < 256; i++){
+		GPIO_PORTB_DATA_R = i ; 
+		SysTick_Wait(delay); 
+	}
+}
+
+void triangleWave(int delay){
+	unsigned int i; 
+	for (i = 0; i < 256; i++){
+		GPIO_PORTB_DATA_R = i; 
+		//TODO: INCLUDE DELAY
+		SysTick_Wait(2550);
+	}
+	 
+	for (i = 255; i>0; i--){
+		GPIO_PORTB_DATA_R = i; 
+		//TODO: INCLUDE DELAY
+		SysTick_Wait(2550); 
+	}
+}
+
+void squareWave (int delay){
+
+	GPIO_PORTB_DATA_R = 0xFF; 
+	
+	SysTick_Wait(delay);
+	
+	
+	GPIO_PORTB_DATA_R = 0x00; 
+	
+	SysTick_Wait(delay); 
+	
+}
+=======
 	FallingEdges = 1;
   //PortF_Init();        // Call initialization of port PF4 PF2    
 	SysTick_Init(16000000);        // initialize SysTick timer
@@ -114,6 +202,7 @@ int main(void){
   }
 }
 
+>>>>>>> f5d9ce207b37f8e9af71f3927fa695fcc59e2f16
 
 // Color    LED(s) PortF
 // dark     ---    0
@@ -167,7 +256,25 @@ void EdgeCounter_Init(void){
   NVIC_EN0_R = 0x40000000;      // (h) enable interrupt 30 in NVIC
 }
 
+<<<<<<< HEAD
+void Init_PortB(void){ 
+	//unsigned int delay;
+  SYSCTL_RCGC2_R |= 0x00000002;     // 1) B clock
+ // delay = SYSCTL_RCGC2_R;           // delay   
+  GPIO_PORTB_CR_R |= 0xFF;           // allow changes to PB7-0      
+  GPIO_PORTB_AMSEL_R = 0x00;        // 3) disable analog function
+  GPIO_PORTB_PCTL_R = 0x00000000;   // 4) GPIO clear bit PCTL  
+  GPIO_PORTB_DIR_R = 0xFF  ;          // 5) PB7-PB0 output 
+  GPIO_PORTB_AFSEL_R = 0x00;        // 6) no alternate function
+  GPIO_PORTB_DEN_R |= 0xFF;          // 7) enable digital pins P7-PB0   
+}
+
+=======
+>>>>>>> f5d9ce207b37f8e9af71f3927fa695fcc59e2f16
 void GPIOPortF_Handler(void){
   GPIO_PORTF_ICR_R = 0x10;      // acknowledge flag4
 	FallingEdges += 1;
+	GPIO_PORTB_DATA_R += 1; 
+	GPIO_PORTF_DATA_R = 0x08; 
+	if(FallingEdges > 3) {FallingEdges =0 ; }
 }
