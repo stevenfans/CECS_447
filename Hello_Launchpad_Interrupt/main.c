@@ -2,6 +2,7 @@
 #define ON_BOARD_LED						(*((volatile unsigned long *)0x40025038))
 #include "PLL.h"
 #include "SysTick.h"
+#include "ADCSWTrigger.h"
 // 2. Declarations Section
 //   Global Variables
 unsigned long In;  // input from PF4
@@ -72,9 +73,11 @@ const int sineTable[256]={128,131,134,137,140,143,146,149,
 	// 3. Subroutines Section
 // MAIN: Mandatory for a C Program to be executable
 int main(void){
+	unsigned long potentiometer, sensor1, sensor2, percent;
 	Counts = 0;
   //PortF_Init();        						// Call initialization of port PF4 PF2    
 	//SysTick_Init(16000000);        		//initialize SysTick timer
+	ADC_Init298();
 	EdgeCounter_Init();
 	SysTick_Init();
 	Init_PortB();
@@ -82,6 +85,10 @@ int main(void){
 	EnableInterrupts();          		 	//AFTER inits, should be global 	
 	PLL_Init();
   while(1){
+		
+		ADC_In298(&potentiometer, &sensor1, &sensor2); // sample AIN2(PE1), AIN9 (PE4), AIN8 (PE5)
+		//percent = getPercent(potentiometer);
+		
     //Systick_1_Second(FallingEdges);	//delay using systick
 		//ON_BOARD_LED ^= 0x04; 					// toggle blue led on tm4c
 		//GPIO_PORTF_DATA_R = 0x02; 
