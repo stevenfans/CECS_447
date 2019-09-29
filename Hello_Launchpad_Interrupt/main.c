@@ -19,6 +19,7 @@ void sineWave(int delay);
 void Init_PortB(void); 
 volatile unsigned long Counts = 0;
 volatile unsigned long FallingEdges = 0;
+float getDelay(unsigned long ADCvalue);
 
 //void SysTick_Init(unsigned long period){
 //  NVIC_ST_CTRL_R = 0;         // disable SysTick during setup
@@ -85,40 +86,48 @@ int main(void){
 	EnableInterrupts();          		 	//AFTER inits, should be global 	
 	PLL_Init();
   while(1){
+		// 50 MHz -> 20   nsec
+		// 80 mhz -> 12.5 nsec
+		// delay 65.1us / 20 nsec = 3255
+		// 1 delay = units of 62.5 nsec for 80 MHz clock
+		// 1 delay = units of 20   nsec for 50 MHz clock
+		// 65.1us / 12.5nsec = 5208
+		// 262 hz = 14.92us/12.5ns = 1194 delay units
+		// 494 hz = 7.8uS/12.5ns = 625 delay units
 		
 		ADC_In298(&potentiometer, &sensor1, &sensor2); // sample AIN2(PE1), AIN9 (PE4), AIN8 (PE5)
-		//percent = getPercent(potentiometer);
 		
-    //Systick_1_Second(FallingEdges);	//delay using systick
-		//ON_BOARD_LED ^= 0x04; 					// toggle blue led on tm4c
-		//GPIO_PORTF_DATA_R = 0x02; 
-		//sineWave(5150);
 		switch(FallingEdges){
-		case 1:
-			GPIO_PORTF_DATA_R = 0x02; // Red
-			sawtoothWave(5150);
-			break;
-		case 2:
-			GPIO_PORTF_DATA_R = 0x04; // Blue
-			squareWave(2550);
-			break;
-		case 3:
-			GPIO_PORTF_DATA_R = 0x08; // Green
-			triangleWave(2550); 
-			break;
-		
-		case 4:
-			GPIO_PORTF_DATA_R = 0x06; //pink
-			sineWave(5150); 
-			break; 
-  }}
+			case 1:
+				GPIO_PORTF_DATA_R = 0x02; // Red
+				sawtoothWave(5150); 
+				break;
+			case 2:
+				GPIO_PORTF_DATA_R = 0x04; // Blue
+				squareWave(2550);
+				break;
+			case 3:
+				GPIO_PORTF_DATA_R = 0x08; // Green
+				triangleWave(2550); 
+				break;
+			
+			case 4:
+				GPIO_PORTF_DATA_R = 0x06; //pink
+				 sineWave(5150); // 60hz
+				break; 
+			case 5:
+				GPIO_PORTF_DATA_R = 0x0A; //yello
+				sineWave(getDelay(potentiometer));
+				break; 
+		}
+	}
 }
 
 void sawtoothWave(int delay){
 	unsigned int i; 
 	for (i = 0; i < 256; i++){
-		GPIO_PORTB_DATA_R = i ; 
-		SysTick_Wait(delay); 
+		GPIO_PORTB_DATA_R = i ; 	
+		SysTick_Wait(5100); 
 	}
 }
 
@@ -126,13 +135,11 @@ void triangleWave(int delay){
 	unsigned int i; 
 	for (i = 0; i < 256; i++){
 		GPIO_PORTB_DATA_R = i; 
-		//TODO: INCLUDE DELAY
 		SysTick_Wait(delay);
 	}
 	 
 	for (i = 255; i>0; i--){
 		GPIO_PORTB_DATA_R = i; 
-		//TODO: INCLUDE DELAY
 		SysTick_Wait(delay); 
 	}
 }
@@ -141,17 +148,15 @@ void squareWave (int delay){
 	unsigned int i; 
 	for (i = 0; i < 256; i++){
 		GPIO_PORTB_DATA_R = 0xFF; 
-		//TODO: INCLUDE DELAY
 		SysTick_Wait(delay);
 	}
 	 
 	for (i = 255; i>0; i--){
 		GPIO_PORTB_DATA_R = 0x00; 
-		//TODO: INCLUDE DELAY
 		SysTick_Wait(delay); 
 	}
 }
-void sineWave(int delay){
+void sineWave(int delay){	
 	unsigned int i ; 
 	for(i=0; i<256; i++){
 		GPIO_PORTB_DATA_R = sineTable[i]; 
@@ -225,5 +230,49 @@ void Init_PortB(void){
 void GPIOPortF_Handler(void){
   GPIO_PORTF_ICR_R = 0x10;      // acknowledge flag4
 	FallingEdges += 1;
-	if(FallingEdges > 4) {FallingEdges =1;}
+	if(FallingEdges > 5) {FallingEdges =1;}
+}
+
+
+float getDelay(unsigned long ADCvalue){
+	int adcTable[]  = {4095, 3584, 3328, 3072, 2816, 2560, 2048, 1792, 1536, 1280, 1024,  768,  512,  256,    0};
+	int distTable[] = { 565,  667,  694,  722,  747,  777,  810,  842,  890,  919,  965, 1015, 1067, 1129, 1194}; // delay table
+	int hzTable[]   = { 494,  468,  449,  433,  418,  402,  386,  371,  355,  340,  324,  308,  293,  277,  262}; // hz table
+	float distance_ADC = 0;  //  <---- THIS USE TO BE CALLed distance but is now changed to distance_ADC so be aware
+	float calibration = 0;
+	float a = 0;
+	float b = 0;
+	int ia = 0;
+	int ib = 0;
+	float m = 0;
+	float l = 0;
+	float lm;
+	int i;
+	int f;
+	for(i = 0; i < 15; i = i + 1){
+			if(ADCvalue > adcTable[i]){
+				break;
+			}
+			else{
+				a = adcTable[i+1];
+				ia = i+1;
+			}
+		}
+		
+		for(f = 0; f < 15; f = f + 1){
+			if(ADCvalue < adcTable[f]){
+				b = adcTable[f];
+				ib = f;
+			}
+			else {
+				break;
+			}
+		}
+		 m = b - a;
+		 l = b - ADCvalue;
+		lm = l / m ;
+		
+		//float distance = distTable[ib] + (lm * 5);
+		//return distance;
+		return distTable[ib] + (lm * 5);
 }

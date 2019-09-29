@@ -9,23 +9,32 @@ Project File Date:  09/28/2019
 <h2>Output:</h2>
 Rebuild target 'HelloLaunchPad'
 compiling main.c...
-main.c(76): warning:  #177-D: variable "percent" was declared but never referenced
+main.c(77): warning:  #177-D: variable "percent" was declared but never referenced
         unsigned long potentiometer, sensor1, sensor2, percent;
-main.c: 1 warning, 0 errors
+main.c(240): warning:  #177-D: variable "hzTable" was declared but never referenced
+        int hzTable[]   = { 494,  468,  449,  433,  418,  402,  386,  371,  355,  340,  324,  308,  293,  277,  262}; // hz table
+main.c(241): warning:  #177-D: variable "distance_ADC" was declared but never referenced
+        float distance_ADC = 0;  //  <---- THIS USE TO BE CALLed distance but is now changed to distance_ADC so be aware
+main.c(242): warning:  #177-D: variable "calibration" was declared but never referenced
+        float calibration = 0;
+main.c(245): warning:  #550-D: variable "ia" was set but never used
+        int ia = 0;
+main.c: 5 warnings, 0 errors
 assembling startup.s...
 compiling SysTick.c...
 compiling ADCSWTrigger.c...
 linking...
-Program Size: Code=3148 RO-data=3088 RW-data=60 ZI-data=1756  
-".\HelloLaunchPad.axf" - 0 Error(s), 1 Warning(s).
+Program Size: Code=4884 RO-data=3268 RW-data=60 ZI-data=1756  
+".\HelloLaunchPad.axf" - 0 Error(s), 5 Warning(s).
 Load "C:\\Users\\Rosswell\\Documents\\Tone-Generator\\Hello_Launchpad_Interrupt\\HelloLaunchPad.axf" 
 Connecting: Mode=JTAG, Speed=1000000Hz
 Erase Done.
 Programming Done.
 Verify OK.
-s).
-Target not created
 Load "C:\\Users\\Rosswell\\Documents\\Tone-Generator\\Hello_Launchpad_Interrupt\\HelloLaunchPad.axf" 
-_____^
-*** error 56: cannot open file
-Error: Flash Download failed  -  Could not load file 'C:\Users\Rosswell\Documents\Tone-Generator\Hello_Launchpad_Interrupt\HelloLaunchPad.axf'
+Connecting: Mode=JTAG, Speed=1000000Hz
+Erase Done.
+Programming Done.
+Verify OK.
+oLaunchPad.axf" - 2 Error(s), 6 Warning(s).
+Target not created
