@@ -1,79 +1,7 @@
-<<<<<<< HEAD
 #include "tm4c123gh6pm.h"	
 #define ON_BOARD_LED						(*((volatile unsigned long *)0x40025038))
 #include "PLL.h"
 #include "SysTick.h"
-=======
-// This is your first program to run on the LaunchPad
-// You will run this program without modification as your Lab 2
-// If the left switch SW1 is 
-//      not pressed the LED toggles blue-red
-//      pressed the LED toggles blue-green
-
-// 0.Documentation Section 
-// main.c
-// Runs on LM4F120 or TM4C123
-// Lab2_HelloLaunchPad, Input from PF4, output to PF3,PF2,PF1 (LED)
-// Authors: Daniel Valvano, Jonathan Valvano and Ramesh Yerraballi
-// Date: January 15, 2016
-
-// LaunchPad built-in hardware
-// SW1 left switch is negative logic PF4 on the Launchpad
-// SW2 right switch is negative logic PF0 on the Launchpad
-// red LED connected to PF1 on the Launchpad
-// blue LED connected to PF2 on the Launchpad
-// green LED connected to PF3 on the Launchpad
-
-// 1. Pre-processor Directives Section
-// Constant declarations to access port registers using 
-// symbolic names instead of addresses
-
-///////////////////////////////////////
-//  Register definitions
-///////////////////////////////////////
-//Port f
-#define GPIO_PORTF_DATA_R       (*((volatile unsigned long *)0x400253FC))
-#define GPIO_PORTF_DIR_R        (*((volatile unsigned long *)0x40025400))
-#define GPIO_PORTF_AFSEL_R      (*((volatile unsigned long *)0x40025420))
-#define GPIO_PORTF_PUR_R        (*((volatile unsigned long *)0x40025510))
-#define GPIO_PORTF_DEN_R        (*((volatile unsigned long *)0x4002551C))
-#define GPIO_PORTF_LOCK_R       (*((volatile unsigned long *)0x40025520))
-#define GPIO_PORTF_CR_R         (*((volatile unsigned long *)0x40025524))
-#define GPIO_PORTF_AMSEL_R      (*((volatile unsigned long *)0x40025528))
-#define GPIO_PORTF_PCTL_R       (*((volatile unsigned long *)0x4002552C))
-#define SYSCTL_RCGC2_R          (*((volatile unsigned long *)0x400FE108))
-//Interrupt Port F
-#define NVIC_EN0_R              (*((volatile unsigned long *)0xE000E100))  // IRQ 0 to 31 Set Enable Register
-#define NVIC_PRI7_R             (*((volatile unsigned long *)0xE000E41C))  // IRQ 28 to 31 Priority Register
-#define GPIO_PORTF_DIR_R        (*((volatile unsigned long *)0x40025400))
-#define GPIO_PORTF_IS_R         (*((volatile unsigned long *)0x40025404))
-#define GPIO_PORTF_IBE_R        (*((volatile unsigned long *)0x40025408))
-#define GPIO_PORTF_IEV_R        (*((volatile unsigned long *)0x4002540C))
-#define GPIO_PORTF_IM_R         (*((volatile unsigned long *)0x40025410))
-#define GPIO_PORTF_RIS_R        (*((volatile unsigned long *)0x40025414))
-#define GPIO_PORTF_ICR_R        (*((volatile unsigned long *)0x4002541C))
-#define GPIO_PORTF_AFSEL_R      (*((volatile unsigned long *)0x40025420))
-#define GPIO_PORTF_PUR_R        (*((volatile unsigned long *)0x40025510))
-#define GPIO_PORTF_PDR_R        (*((volatile unsigned long *)0x40025514))
-#define GPIO_PORTF_DEN_R        (*((volatile unsigned long *)0x4002551C))
-#define GPIO_PORTF_AMSEL_R      (*((volatile unsigned long *)0x40025528))
-#define GPIO_PORTF_PCTL_R       (*((volatile unsigned long *)0x4002552C))
-#define SYSCTL_RCGC2_R          (*((volatile unsigned long *)0x400FE108))
-#define SYSCTL_RCGC2_GPIOF      0x00000020  // port F Clock Gating Control
-//Systick
-#define GPIO_PORTF_DATA_R       (*((volatile unsigned long *)0x400253FC))
-#define GPIO_PORTF_DIR_R        (*((volatile unsigned long *)0x40025400))
-#define GPIO_PORTF_AFSEL_R      (*((volatile unsigned long *)0x40025420))
-#define GPIO_PORTF_DEN_R        (*((volatile unsigned long *)0x4002551C))
-#define GPIO_PORTF_AMSEL_R      (*((volatile unsigned long *)0x40025528))
-#define GPIO_PORTF_PCTL_R       (*((volatile unsigned long *)0x4002552C))
-#define SYSCTL_RCGC2_R          (*((volatile unsigned long *)0x400FE108))
-#define NVIC_SYS_PRI3_R         (*((volatile unsigned long *)0xE000ED20))  // Sys. Handlers 12 to 15 Priority
-#define NVIC_ST_CTRL_R          (*((volatile unsigned long *)0xE000E010))
-#define NVIC_ST_RELOAD_R        (*((volatile unsigned long *)0xE000E014))
-#define NVIC_ST_CURRENT_R       (*((volatile unsigned long *)0xE000E018))
-
->>>>>>> f5d9ce207b37f8e9af71f3927fa695fcc59e2f16
 // 2. Declarations Section
 //   Global Variables
 unsigned long In;  // input from PF4
@@ -83,16 +11,13 @@ unsigned long Out; // outputs to PF3,PF2,PF1 (multicolor LED)
 void EnableInterrupts(void);
 void WaitForInterrupt(void);  // low power mode
 void EdgeCounter_Init(void);
-<<<<<<< HEAD
 void sawtoothWave(int delay);
 void triangleWave(int delay); 
 void squareWave(int delay); 
+void sineWave(int delay); 
 void Init_PortB(void); 
-=======
->>>>>>> f5d9ce207b37f8e9af71f3927fa695fcc59e2f16
 volatile unsigned long Counts = 0;
 volatile unsigned long FallingEdges = 0;
-
 
 //void SysTick_Init(unsigned long period){
 //  NVIC_ST_CTRL_R = 0;         // disable SysTick during setup
@@ -111,13 +36,43 @@ volatile unsigned long FallingEdges = 0;
 //	}
 //}
 
+const int sineTable[256]={128,131,134,137,140,143,146,149,
+152,156,159,162,165,168,171,174,
+176,179,182,185,188,191,193,196,
+199,201,204,206,209,211,213,216,
+218,220,222,224,226,228,230,232,
+234,235,237,239,240,242,243,244,
+246,247,248,249,250,251,251,252,
+253,253,254,254,254,255,255,255,
+255,255,255,255,254,254,253,253,
+252,252,251,250,249,248,247,246,
+245,244,242,241,239,238,236,235,
+233,231,229,227,225,223,221,219,
+217,215,212,210,207,205,202,200,
+197,195,192,189,186,184,181,178,
+175,172,169,166,163,160,157,154,
+151,148,145,142,138,135,132,129,
+126,123,120,117,113,110,107,104,
+101,98,95,92,89,86,83,80,
+77,74,71,69,66,63,60,58,
+55,53,50,48,45,43,40,38,
+36,34,32,30,28,26,24,22,
+20,19,17,16,14,13,11,10,
+9,8,7,6,5,4,3,3,
+2,2,1,1,0,0,0,0,
+0,0,0,1,1,1,2,2,
+3,4,4,5,6,7,8,9,
+11,12,13,15,16,18,20,21,
+23,25,27,29,31,33,35,37,
+39,42,44,46,49,51,54,56,
+59,62,64,67,70,73,76,79,
+81,84,87,90,93,96,99,103,
+106,109,112,115,118,121,124,128}; 
+
 	// 3. Subroutines Section
 // MAIN: Mandatory for a C Program to be executable
 int main(void){
-	
-	//unsigned int i;
 	Counts = 0;
-<<<<<<< HEAD
   //PortF_Init();        						// Call initialization of port PF4 PF2    
 	//SysTick_Init(16000000);        		//initialize SysTick timer
 	EdgeCounter_Init();
@@ -130,27 +85,26 @@ int main(void){
     //Systick_1_Second(FallingEdges);	//delay using systick
 		//ON_BOARD_LED ^= 0x04; 					// toggle blue led on tm4c
 		//GPIO_PORTF_DATA_R = 0x02; 
-		//sawtoothWave(5150);
-		squareWave(660000);
-		//squareWave(10000); 
-		//triangleWave(0); 
-//		switch(FallingEdges){
-//		case 1:
-//			GPIO_PORTF_DATA_R = 0x02; // Red
-//			sawtoothWave(0);
-//			SysTick_Wait(3255); 
-//			break;
-//		case 2:
-//			GPIO_PORTF_DATA_R = 0x04; // Blue
-//			triangleWave(0);
-//			break;
-//		case 3:
-//			GPIO_PORTF_DATA_R = 0x08; // Green
-//			FallingEdges = 0;
-//			squareWave(0);
-//			break;
-//	}
-  }
+		//sineWave(5150);
+		switch(FallingEdges){
+		case 1:
+			GPIO_PORTF_DATA_R = 0x02; // Red
+			sawtoothWave(5150);
+			break;
+		case 2:
+			GPIO_PORTF_DATA_R = 0x04; // Blue
+			squareWave(2550);
+			break;
+		case 3:
+			GPIO_PORTF_DATA_R = 0x08; // Green
+			triangleWave(2550); 
+			break;
+		
+		case 4:
+			GPIO_PORTF_DATA_R = 0x06; //pink
+			sineWave(5150); 
+			break; 
+  }}
 }
 
 void sawtoothWave(int delay){
@@ -166,44 +120,37 @@ void triangleWave(int delay){
 	for (i = 0; i < 256; i++){
 		GPIO_PORTB_DATA_R = i; 
 		//TODO: INCLUDE DELAY
-		SysTick_Wait(2550);
+		SysTick_Wait(delay);
 	}
 	 
 	for (i = 255; i>0; i--){
 		GPIO_PORTB_DATA_R = i; 
 		//TODO: INCLUDE DELAY
-		SysTick_Wait(2550); 
+		SysTick_Wait(delay); 
 	}
 }
 
 void squareWave (int delay){
-
-	GPIO_PORTB_DATA_R = 0xFF; 
-	
-	SysTick_Wait(delay);
-	
-	
-	GPIO_PORTB_DATA_R = 0x00; 
-	
-	SysTick_Wait(delay); 
-	
+	unsigned int i; 
+	for (i = 0; i < 256; i++){
+		GPIO_PORTB_DATA_R = 0xFF; 
+		//TODO: INCLUDE DELAY
+		SysTick_Wait(delay);
+	}
+	 
+	for (i = 255; i>0; i--){
+		GPIO_PORTB_DATA_R = 0x00; 
+		//TODO: INCLUDE DELAY
+		SysTick_Wait(delay); 
+	}
 }
-=======
-	FallingEdges = 1;
-  //PortF_Init();        // Call initialization of port PF4 PF2    
-	SysTick_Init(16000000);        // initialize SysTick timer
-	EdgeCounter_Init();
-	EnableInterrupts();           // * AFTER inits, should be global
-  while(1){
-    Systick_1_Second(FallingEdges);
-    GPIO_PORTF_DATA_R = 0x04;    // LED is blue
-    Systick_1_Second(FallingEdges);
-		GPIO_PORTF_DATA_R = 0x00;    // LED is off
-  }
+void sineWave(int delay){
+	unsigned int i ; 
+	for(i=0; i<256; i++){
+		GPIO_PORTB_DATA_R = sineTable[i]; 
+		SysTick_Wait(delay); 
+	}
 }
-
->>>>>>> f5d9ce207b37f8e9af71f3927fa695fcc59e2f16
-
 // Color    LED(s) PortF
 // dark     ---    0
 // red      R--    0x02
@@ -219,7 +166,7 @@ void squareWave (int delay){
 // Outputs: None
 // Notes: ...
 
-
+	
 void SysTick_Handler(void){
 	//Nothing important - no handling
   //GPIO_PORTF_DATA_R ^= 0x04;       // toggle PF2
@@ -256,7 +203,6 @@ void EdgeCounter_Init(void){
   NVIC_EN0_R = 0x40000000;      // (h) enable interrupt 30 in NVIC
 }
 
-<<<<<<< HEAD
 void Init_PortB(void){ 
 	//unsigned int delay;
   SYSCTL_RCGC2_R |= 0x00000002;     // 1) B clock
@@ -269,12 +215,8 @@ void Init_PortB(void){
   GPIO_PORTB_DEN_R |= 0xFF;          // 7) enable digital pins P7-PB0   
 }
 
-=======
->>>>>>> f5d9ce207b37f8e9af71f3927fa695fcc59e2f16
 void GPIOPortF_Handler(void){
   GPIO_PORTF_ICR_R = 0x10;      // acknowledge flag4
 	FallingEdges += 1;
-	GPIO_PORTB_DATA_R += 1; 
-	GPIO_PORTF_DATA_R = 0x08; 
-	if(FallingEdges > 3) {FallingEdges =0 ; }
+	if(FallingEdges > 4) {FallingEdges =1;}
 }
