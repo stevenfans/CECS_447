@@ -276,3 +276,33 @@ float getDelay(unsigned long ADCvalue){
 		//return distance;
 		return distTable[ib] + (lm * 5);
 }
+
+
+
+/*
+// Python Map generator
+adcTable = []
+distTable = []
+hzTable = []
+def getDelay(hz):
+  delay = (80000000/hz/256)
+  return delay
+
+for count in range(0,51,1):
+  hz = count * (494-262)/50 + 262
+  adc = count * (4096-0)/50
+  delay = getDelay(hz)
+  
+  # print(adc)
+  adcTable.append(int(adc))
+  distTable.append(int(delay))
+  hzTable.append(int(hz))
+
+
+#print(adcTable[::-1])
+print((distTable)[::-1])
+#print(hzTable)
+
+
+
+*/
