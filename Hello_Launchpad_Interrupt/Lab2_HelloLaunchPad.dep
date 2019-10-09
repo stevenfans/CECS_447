@@ -1,16 +1,4 @@
 Dependencies for Project 'Lab2', Target 'HelloLaunchPad': (DO NOT MODIFY !)
-F (.\main.c)(0x5D9055F8)(-c --cpu Cortex-M4 -D__EVAL -g -O0 --apcs=interwork --split_sections --signed_chars -I.. -I..\..\..-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\Luminary-Drvmdk -DPART_LM4F120H5QR-o .\main.o --omf_browse .\main.crf --depend .\main.d)
-I (tm4c123gh6pm.h)(0x5D901DF2)
-I (PLL.h)(0x5D901DF2)
-I (SysTick.h)(0x5D901DF2)
-I (ADCSWTrigger.h)(0x5BE268D7)
-F (.\startup.s)(0x5AAC1EBB)(--cpu Cortex-M4 --pd "__EVAL SETA 1" -g --apcs=interwork -I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\Luminary--list .\startup.lst --xref -o .\startup.o --depend .\startup.d)
-F (.\tm4c123gh6pm.h)(0x5D901DF2)()
-F (.\PLL.h)(0x5D901DF2)()
-F (.\SysTick.h)(0x5D901DF2)()
-F (.\SysTick.c)(0x5D901DF2)(-c --cpu Cortex-M4 -D__EVAL -g -O0 --apcs=interwork --split_sections --signed_chars -I.. -I..\..\..-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\Luminary-Drvmdk -DPART_LM4F120H5QR-o .\systick.o --omf_browse .\systick.crf --depend .\systick.d)
-I (SysTick.h)(0x5D901DF2)
-F (.\ADCSWTrigger.c)(0x5BE268DA)(-c --cpu Cortex-M4 -D__EVAL -g -O0 --apcs=interwork --split_sections --signed_chars -I.. -I..\..\..-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\Luminary-Drvmdk -DPART_LM4F120H5QR-o .\adcswtrigger.o --omf_browse .\adcswtrigger.crf --depend .\adcswtrigger.d)
-I (ADCSWTrigger.h)(0x5BE268D7)
-I (tm4c123gh6pm.h)(0x5D901DF2)
-F (.\texas.o)(0x5699D7D6)()
+F (.\main.c)(0x5D797F25)(-c --cpu Cortex-M4 -D__EVAL -g -O0 --apcs=interwork --split_sections --signed_chars -I .. -I ..\..\..-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Luminary-D__UVISION_VERSION="527" -Drvmdk -DPART_LM4F120H5QR-o .\main.o --omf_browse .\main.crf --depend .\main.d)
+F (.\startup.s)(0x5D797E7C)(--cpu Cortex-M4 --pd "__EVAL SETA 1" -g --apcs=interwork -IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Luminary--pd "__UVISION_VERSION SETA 527"--list .\startup.lst --xref -o .\startup.o --depend .\startup.d)
+F (.\texas.o)(0x5D797E7C)()
