@@ -108,3 +108,8 @@ void UART_OutUHex(unsigned long number);
 // Output: Null terminated string
 // -- Modified by Agustinus Darmawan + Mingjie Qiu --
 void UART_InString(char *bufPt, unsigned short max);
+
+
+
+
+void OutCRLF(void);
