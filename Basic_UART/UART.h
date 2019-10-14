@@ -113,3 +113,11 @@ void UART_InString(char *bufPt, unsigned short max);
 
 
 void OutCRLF(void);
+
+
+//------------UART_InCharNonBlocking------------
+// Get oldest serial port input and return immediately
+// if there is no data.
+// Input: none
+// Output: ASCII code for key typed or 0 if no character
+unsigned char UART_InCharNonBlocking(void);

@@ -254,3 +254,16 @@ void OutCRLF(void){
 }
 
 
+//------------UART_InCharNonBlocking------------
+// Get oldest serial port input and return immediately
+// if there is no data.
+// Input: none
+// Output: ASCII code for key typed or 0 if no character
+unsigned char UART_InCharNonBlocking(void){
+// as part of Lab 11, modify this program to use UART0 instead of UART1
+  if((UART0_FR_R&UART_FR_RXFE) == 0){
+    return((unsigned char)(UART0_DR_R&0xFF));
+  } else{
+    return 0;
+  }
+}
