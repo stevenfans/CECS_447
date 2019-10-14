@@ -76,8 +76,8 @@ int main(void){
   unsigned char i;
   char string[20];  // global to assist in debugging
   unsigned long c;
-	unsigned long previous;
-
+	unsigned long previous = 'r'; //default r: sawtooth
+	
 	SysTick_Init();
 		Init_PortB();
   
@@ -93,34 +93,60 @@ int main(void){
 	
   GPIO_PORTF_DATA_R = 0x02; // Red
 	
-	UART_OutString("UART Initialized");
-	//OutCRLF();
+	UART_OutString("UART Initialized"); OutCRLF();
+	UART_OutString("Sine     (S)"); OutCRLF();
+	UART_OutString("Triangle (T)"); OutCRLF();
+	UART_OutString("Square   (Q)"); OutCRLF();
+	UART_OutString("Sawtooth (R)"); OutCRLF();
+	
+	
 	
   while(1){
-		
-		//sineWave(5150); // 60hz
-		//				sawtoothWave(5150); 
-
-	//					squareWave(2550);
-//						triangleWave(2550); 
-
-		
-		//UART_OutString("Enter character: ");
-		
 	
-		c = UART_InCharNonBlocking();
-		// UART_OutChar(n);
 		
-		if (c=='s') previous = 's';
-		else if (c=='t') previous = 't';
-		else if (c=='0') previous = previous;
+		c = UART_InCharNonBlocking();
+		
+		
+		if (c=='s') {
+			UART_OutString("sine wave displayed");
+			OutCRLF();
+			previous = 's';
 			
-    if (previous == 's'){
+		}
+		else if (c=='t'){
+			UART_OutString("triangle wave displayed");
+			OutCRLF();
+			previous = 't';
+		}
+		else if (c == 'q'){
+			UART_OutString("square wave displayed");
+			OutCRLF();
+			previous = 'q';
+		}
+		else if (c == 'r'){
+			UART_OutString("Sawtooth wave displayed");
+			OutCRLF();
+			previous = 'r';
+		}
+		else if (c=='0'){
+			// No message
+			previous = previous;
+		}
+			
+    if (previous == 'r'){
 			sawtoothWave(5150);
 		}
 		else if (previous == 't'){
-			squareWave(2550);
+			triangleWave(2550); 
 		}
+		else if (previous == 's'){
+			sineWave(5150);
+		}
+		else if (previous == 'q'){
+			squareWave(2550);
+			
+		}
+		//else { sawtooth default }
   }
 }
 
