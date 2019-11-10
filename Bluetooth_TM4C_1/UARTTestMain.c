@@ -102,26 +102,31 @@ unsigned long d;
   OutCRLF();
 	
 	PORTF_Init();
-		EnableInterrupts();          		 	//AFTER inits, 
+	EnableInterrupts();          		 	//AFTER inits, 
 	
 	PLL_Init();
 	
   GPIO_PORTF_DATA_R = 0x02; // Red
-//	
+	
 //	UART_OutString("UART Initialized"); OutCRLF();
 //	UART_OutString("Sine     (S)"); OutCRLF();
 //	UART_OutString("Triangle (T)"); OutCRLF();
 //	UART_OutString("Square   (Q)"); OutCRLF();
 //	UART_OutString("Sawtooth (R)"); OutCRLF();
 //	
-	UART_OutString("Enter");OutCRLF();
+//	UART_OutString("Enter");OutCRLF();
 //	UART1_OutString("AT\r\n");
-//	SysTick_Wait(1000); 
-//	UART1_OutString("AT+NAME?\r\n");
-//	//UART_OutString("InString: ");
-//  UART1_InString(string,19);
-//  UART1_OutString(" OutString="); UART1_OutString(string); OutCRLF();
-//	SysTick_Wait(1000);
+	SysTick_Wait(1000); 
+	//UART1_OutString("AT+NAME=STVNWELL\r\n");
+	//UART_OutString("InString: ");
+  //UART1_InString(string,19);
+  //UART1_OutString(" OutString="); UART1_OutString(string); OutCRLF();
+	//SysTick_Wait(1000);
+	UART1_OutString("AT+PSWD=1234\r\n");
+	//UART_OutString("InString: ");
+  //UART1_InString(string,19);
+  //UART1_OutString(" OutString="); UART1_OutString(string); OutCRLF();
+	SysTick_Wait(1000);
 ////	UART_InString(string, 1);
 //	UART1_OutString("AT");
 //	//UART_OutString("InString: ");
@@ -132,8 +137,10 @@ unsigned long d;
 //	//UART_OutString("TST"); OutCRLF();
 //	SysTick_Wait(1000); 
 //	
-//	UART1_OutString("AT+NAME=STVNWELL\r\n"); 
-//	SysTick_Wait(1000);  
+	UART1_OutString("AT+UART=57600,0,2\r\n"); 
+//	SysTick_Wait(1000); 
+
+	GPIO_PORTF_DATA_R = 0x04; 
 	
   while(1){
 //		
@@ -143,109 +150,15 @@ unsigned long d;
 //				if (c != 0x00){
 //					GPIO_PORTF_DATA_R = 0x0E; 
 //				}
-
-		n = UART1_InChar();
-		UART_OutChar(n); OutCRLF(); 
-		//UART_OutChar('s'); 
-		GPIO_PORTF_DATA_R ^=0x0E; 
 		
-		
-		
-		//toggle bit BLUE
-		if (n == 0x24) // whole word instruction 
-			{
-				// blue
-				while(data != 0x26) 
-				{
-					GPIO_PORTF_DATA_R = 0x04;
-					data = UART1_InChar();
-					OutCRLF();
-					
-					// push data to top of stack
-					if (data!=0x26){ push(data);}
-				}
-			}
-			
-		//stop bit RED
-		else if(data == 0x26)
-			{
-				GPIO_PORTF_DATA_R = 0x02;
-				
-				UART_OutString("********** Console Output *********** ");
-				OutCRLF();
+		UART1_OutString("Enter: "); 
+		UART1_InString(string, 20); OutCRLF(); 
+		UART1_OutString("String: "); UART1_OutString(string); OutCRLF(); 
+		GPIO_PORTF_DATA_R = 0x08; 
 
-				UART_OutString("Done transmitting.");
-				OutCRLF();
-				
-				UART_OutString("Data received: 0x");
-				
-				
-				// output array of data
-				for (i = 0; i < top+1; i++)
-					{
-						UART_OutUHex(hello[i]);
-					}
-				OutCRLF();
-
-				// sum of every element except checkSum
-				for (i = 0; i < top; i++)
-					{
-						sum+= hello[i];
-					}
-				
-
-				UART_OutString("checkSum Value: 0x");
-				checkSum = hello[5];
-				UART_OutChar(checkSum & 0x000000FF);
-				OutCRLF();
-
-				isValid = checkSum + (sum & a);
-				UART_OutString("Sum of instruction: 0x");
-				UART_OutChar(sum);
-				OutCRLF();
-				
-				UART_OutString("checkSum + sum: 0x");
-				UART_OutChar(isValid);
-				OutCRLF();
-				
-				// add checkSum to instruction word
-				top++;
-				hello[top] = checkSum;
-					
-				if(isValid == 0xFF){
-					UART_OutString("Data is valid.");
-					OutCRLF();
-				}
-				
-				else if (isValid != 0xFF){
-					UART_OutString("Data is not valid.");
-					OutCRLF();
-				}
-					
-				// reset stack
-				data = 0;
-				top = -1;
-				sum = 0;
-			}
-		
-	}
-	
-	// output to terminal via UART 0
-	for (i = 0; i < 5; i++)
-	{
-		UART_OutChar(hello[i]);
-	}
 		
 }
 
-
-
-// push to stack
-void push(unsigned char x)
-{
-	top++;
-	hello[top] = x;
-}
 //			cmd = UART_InCharNonBlocking();
 //			
 //			if ( cmd == "AT\r\n"){
@@ -295,7 +208,7 @@ void push(unsigned char x)
 //			
 //		}
 		//else { sawtooth default }
-
+	}
 
 
 // Color    LED(s) PortF

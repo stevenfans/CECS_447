@@ -73,9 +73,9 @@ void UART_Init(void){
 void UART1_Init(void){
   SYSCTL_RCGC1_R |= 0x02; // activate UART1
   SYSCTL_RCGC2_R |= 0x02; // activate port B
-  UART1_CTL_R &= ~0x01;      // disable UART
-  UART1_IBRD_R = 325;                    // IBRD = int(50,000,000 / (16 * 9600)) = int(325.52083)
-  UART1_FBRD_R = 33;                     // FBRD = int(0.52083 * 64 + 0.5) = 33.383
+  UART1_CTL_R &= ~0x01;      // disable UART    extra: 325/22 
+  UART1_IBRD_R = 54;                    // IBRD = int(50,000,000 / (16 * 57600)) = int(54.25347)
+  UART1_FBRD_R = 16;                     // FBRD = int(0.25347 * 64 + 0.5) = 16
                                         // 8 bit word length (no parity bits, one stop bit, FIFOs)
   UART1_LCRH_R = (UART_LCRH_WLEN_8|UART_LCRH_FEN);
   UART1_CTL_R |= 0x01;       // enable UART
