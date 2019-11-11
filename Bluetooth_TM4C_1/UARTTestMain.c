@@ -117,7 +117,8 @@ unsigned long d;
 //	UART_OutString("Enter");OutCRLF();
 //	UART1_OutString("AT\r\n");
 	SysTick_Wait(1000); 
-	//UART1_OutString("AT+NAME=STVNWELL\r\n");
+	UART1_OutString("AT+NAME=PHANWELL\r\n");
+	SysTick_Wait(1000); 
 	//UART_OutString("InString: ");
   //UART1_InString(string,19);
   //UART1_OutString(" OutString="); UART1_OutString(string); OutCRLF();
@@ -143,6 +144,7 @@ unsigned long d;
 	GPIO_PORTF_DATA_R = 0x04; 
 	
   while(1){
+		
 //		
 //				c = UART_InChar();
 //				//UART_OutChar('j');
@@ -150,11 +152,11 @@ unsigned long d;
 //				if (c != 0x00){
 //					GPIO_PORTF_DATA_R = 0x0E; 
 //				}
-		
-		UART1_OutString("Enter: "); 
-		UART1_InString(string, 20); OutCRLF(); 
-		UART1_OutString("String: "); UART1_OutString(string); OutCRLF(); 
-		GPIO_PORTF_DATA_R = 0x08; 
+//		
+//		UART1_OutString("Enter: "); 
+//		UART1_InString(string, 20); OutCRLF(); 
+//		UART1_OutString("String: "); UART1_OutString(string); OutCRLF(); 
+//		GPIO_PORTF_DATA_R = 0x08; 
 
 		
 }

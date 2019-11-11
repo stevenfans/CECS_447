@@ -40,13 +40,8 @@
 // Input: none
 // Output: none
 void UART_Init(void);
-
-void UART1_Init(void);
-
-unsigned char UART1_InChar(void); 
-void UART1_OutChar(unsigned char data); 
-void UART1_OutString(char *pt);
-unsigned char UART1_InCharNonBlocking(void);
+void UART1_Init(void); 
+void UART2_Init(void); 
 
 //------------UART_InChar------------
 // Wait for new serial port input
@@ -128,3 +123,13 @@ void OutCRLF(void);
 // Input: none
 // Output: ASCII code for key typed or 0 if no character
 unsigned char UART_InCharNonBlocking(void);
+
+
+//------------UART 1 Functions-------------------
+unsigned char UART1_InChar(void); 
+void UART1_OutChar(unsigned char data); 
+void UART1_OutString(char *pt);
+unsigned char UART1_InCharNonBlocking(void);
+
+//------------UART 2 Functions-------------------
+

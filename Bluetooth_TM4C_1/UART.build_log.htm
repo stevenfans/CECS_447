@@ -40,6 +40,8 @@ UARTTestMain.c(79): warning:  #177-D: variable "bfptr"  was declared but never r
   	char *bfptr;
 UARTTestMain.c(80): warning:  #177-D: variable "cmd"  was declared but never referenced
   	char cmd; 
+UARTTestMain.c(81): warning:  #177-D: variable "string"  was declared but never referenced
+    char string[50];  // global to assist in debugging
 UARTTestMain.c(82): warning:  #177-D: variable "c"  was declared but never referenced
     unsigned long c;
 UARTTestMain.c(83): warning:  #177-D: variable "previous"  was declared but never referenced
@@ -64,10 +66,10 @@ UARTTestMain.c(92): warning:  #177-D: variable "steven"  was declared but never 
   int isValid;char steven[20];
 UARTTestMain.c(93): warning:  #177-D: variable "d"  was declared but never referenced
   unsigned long d;
-UARTTestMain.c: 16 warnings, 0 errors
+UARTTestMain.c: 17 warnings, 0 errors
 linking...
-Program Size: Code=2160 RO-data=16 RW-data=0 ZI-data=1120  
-".\UART.axf" - 0 Error(s), 16 Warning(s).
+Program Size: Code=2036 RO-data=16 RW-data=0 ZI-data=1120  
+".\UART.axf" - 0 Error(s), 17 Warning(s).
 Build Time Elapsed:  00:00:01
 </pre>
 </body>

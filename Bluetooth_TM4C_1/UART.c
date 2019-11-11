@@ -88,53 +88,25 @@ void UART1_Init(void){
   GPIO_PORTB_AMSEL_R &= ~0x03;          // disable analog functionality on PA
 }
 
-void UART1_InString(char *bufPt, unsigned short max) {
-int length=0;
-char character;
-  character = UART1_InChar();
-  while(character != CR){
-    if(character == BS){
-      if(length){
-        bufPt--;
-        length--;
-        UART1_OutChar(BS);
-      }
-    }
-    else if(length < max){
-      *bufPt = character;
-      bufPt++;
-      length++;
-      UART1_OutChar(character);
-    }
-    character = UART1_InChar();
-  }
-  *bufPt = 0;
-}
-
-//------------UART1_InChar------------
-// Wait for new serial port input
-// Input: none
-// Output: ASCII code for key typed
-unsigned char UART1_InChar(void){
-  while((UART1_FR_R&UART_FR_RXFE) != 0);
-  return((unsigned char)(UART1_DR_R&0xFF));
-}
-//------------UART1_OutChar------------
-// Output 8-bit to serial port
-// Input: letter is an 8-bit ASCII character to be transferred
-// Output: none
-void UART1_OutChar(unsigned char data){
-  while((UART1_FR_R&UART_FR_TXFF) != 0);
-  UART1_DR_R = data;
-}
-
-unsigned char UART1_InCharNonBlocking(void){
-// as part of Lab 11, modify this program to use UART0 instead of UART1
-  if((UART1_FR_R&UART_FR_RXFE) == 0){
-    return((unsigned char)(UART1_DR_R&0xFF));
-  } else{
-    return 0;
-  }
+void UART2_Init(void){
+	volatile unsigned long delay; 
+  SYSCTL_RCGC1_R |= 0x04; // activate UART2
+  delay = SYSCTL_RCGC2_R;           // reading register adds a delay   
+  SYSCTL_RCGC2_R |= 0x08; // activate port D
+	GPIO_PORTF_LOCK_R = 0x4C4F434B;	// unlock portD
+  UART1_CTL_R &= ~0x01;      // disable UART    extra: 325/22 
+  UART1_IBRD_R = 325;                    // IBRD = int(50,000,000 / (16 * 9600)) = int(325.52083)
+  UART1_FBRD_R = 33;                     // FBRD = int(0.52083 * 64 + 0.5) = 33
+                                        // 8 bit word length (no parity bits, one stop bit, FIFOs)
+  UART1_LCRH_R = (UART_LCRH_WLEN_8|UART_LCRH_FEN);
+  UART1_CTL_R |= 0x01;       // enable UART
+  GPIO_PORTB_AFSEL_R |= 0xC0;           // enable alt funct on PD6-7
+  GPIO_PORTB_DEN_R |= 0x0C0;             // enable digital I/O on PB1-0
+                                        // configure PA1-0 as UART
+  //GPIO_PORTB_PCTL_R = (GPIO_PORTB_PCTL_R&0xFFFFFF00)+0x00000011;
+	GPIO_PORTB_PCTL_R &= ~0xFF000000; 
+	GPIO_PORTB_PCTL_R |=  0x11000000; 
+  GPIO_PORTB_AMSEL_R &= ~0xC0;          // disable analog functionality on PA
 }
 
 //------------UART_InChar------------
@@ -347,4 +319,104 @@ unsigned char UART_InCharNonBlocking(void){
   } else{
     return 0;
   }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//------------UART1_InChar------------
+// Wait for new serial port input
+// Input: none
+// Output: ASCII code for key typed
+unsigned char UART1_InChar(void){
+  while((UART1_FR_R&UART_FR_RXFE) != 0);
+  return((unsigned char)(UART1_DR_R&0xFF));
+}
+//------------UART1_OutChar------------
+// Output 8-bit to serial port
+// Input: letter is an 8-bit ASCII character to be transferred
+// Output: none
+void UART1_OutChar(unsigned char data){
+  while((UART1_FR_R&UART_FR_TXFF) != 0);
+  UART1_DR_R = data;
+}
+
+unsigned char UART1_InCharNonBlocking(void){
+// as part of Lab 11, modify this program to use UART0 instead of UART1
+  if((UART1_FR_R&UART_FR_RXFE) == 0){
+    return((unsigned char)(UART1_DR_R&0xFF));
+  } else{
+    return 0;
+  }
+}
+
+void UART1_InString(char *bufPt, unsigned short max) {
+int length=0;
+char character;
+  character = UART1_InChar();
+  while(character != CR){
+    if(character == BS){
+      if(length){
+        bufPt--;
+        length--;
+        UART1_OutChar(BS);
+      }
+    }
+    else if(length < max){
+      *bufPt = character;
+      bufPt++;
+      length++;
+      UART1_OutChar(character);
+    }
+    character = UART1_InChar();
+  }
+  *bufPt = 0;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//------------UART2_InChar------------
+// Wait for new serial port input
+// Input: none
+// Output: ASCII code for key typed
+unsigned char UART2_InChar(void){
+  while((UART2_FR_R&UART_FR_RXFE) != 0);
+  return((unsigned char)(UART2_DR_R&0xFF));
+}
+//------------UART2_OutChar------------
+// Output 8-bit to serial port
+// Input: letter is an 8-bit ASCII character to be transferred
+// Output: none
+void UART2_OutChar(unsigned char data){
+  while((UART2_FR_R&UART_FR_TXFF) != 0);
+  UART2_DR_R = data;
+}
+
+unsigned char UART2_InCharNonBlocking(void){
+// as part of Lab 11, modify this program to use UART0 instead of UART1
+  if((UART2_FR_R&UART_FR_RXFE) == 0){
+    return((unsigned char)(UART2_DR_R&0xFF));
+  } else{
+    return 0;
+  }
+}
+
+void UART2_InString(char *bufPt, unsigned short max) {
+int length=0;
+char character;
+  character = UART2_InChar();
+  while(character != CR){
+    if(character == BS){
+      if(length){
+        bufPt--;
+        length--;
+        UART2_OutChar(BS);
+      }
+    }
+    else if(length < max){
+      *bufPt = character;
+      bufPt++;
+      length++;
+      UART2_OutChar(character);
+    }
+    character = UART2_InChar();
+  }
+  *bufPt = 0;
 }
