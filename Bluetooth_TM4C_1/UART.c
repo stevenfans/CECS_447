@@ -97,9 +97,10 @@ void UART2_Init(void){
   UART2_CTL_R &= ~0x01;      						// disable UART    extra: 325/22 
   UART2_IBRD_R = 325;                    // IBRD = int(50,000,000 / (16 * 9600)) = int(325.52083)
   UART2_FBRD_R = 33;                     // FBRD = int(0.52083 * 64 + 0.5) = 33
-                                        // 8 bit word length (no parity bits, one stop bit, FIFOs)
+																					// 8 bit word length (no parity bits, one stop bit, FIFOs)
   UART2_LCRH_R = 0x70; 
   UART2_CTL_R |= 0x01;       						// enable UART
+	GPIO_PORTD_CR_R |= 0x80; 
   GPIO_PORTD_AFSEL_R |= 0xC0;           // enable alt funct on PD6-7
   GPIO_PORTD_DEN_R |= 0x0C0;             // enable digital I/O on PD7-6
                                         // configure PA1-0 as UART

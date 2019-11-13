@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\UART.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\UART.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Tue Nov 12 16:49:25 2019
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Tue Nov 12 16:58:11 2019
 <BR><P>
 <H3>Maximum Stack Usage =         68 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -845,8 +845,10 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[a1]"></a>UART2_Init</STRONG> (Thumb, 140 bytes, Stack size 0 bytes, uart.o(i.UART2_Init))
-<BR><BR>[Called By]<UL><LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<P><STRONG><a name="[a1]"></a>UART2_Init</STRONG> (Thumb, 166 bytes, Stack size 8 bytes, uart.o(i.UART2_Init))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = UART2_Init
+</UL>
+<BR>[Called By]<UL><LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
 <P><STRONG><a name="[9a]"></a>UART2_OutChar</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, uart.o(i.UART2_OutChar))
