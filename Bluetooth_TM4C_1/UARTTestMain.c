@@ -36,7 +36,6 @@ void squareWave(int delay);
 void sineWave(int delay); 
 void Init_PortB(void);
 void EnableInterrupts(void);
-int top = -1;unsigned char hello[100];
 unsigned long stringToNumber(char string[4]); 
 
 const int sineTable[256]={128,131,134,137,140,143,146,149,
@@ -103,7 +102,7 @@ unsigned long d;
   OutCRLF();
 	
 	//PORTF_Init();
-	PWM_Init(40000, 30000); 
+	PWM_Init(255, 250); 
 	EnableInterrupts();          		 	//AFTER inits, 
 	PLL_Init();
 	
@@ -132,7 +131,7 @@ unsigned long d;
 	//SysTick_Wait(10000000); 
 
 	GPIO_PORTF_DATA_R = 0x04; 
-	UART_OutString("TESTS"); 
+	UART_OutString("UART Initilized"); 
 	
   while(1){
 			
@@ -153,7 +152,8 @@ unsigned long d;
 			pwm_value = stringToNumber(string); 
 			UART_OutUDec(pwm_value); 
 			//dim lights 
-			GPIO_PORTF_DATA_R = 0x0A; 
+			PWM_PF1_Duty(pwm_value); 
+			//GPIO_PORTF_DATA_R = 0x0A; 
 		}
 		OutCRLF1();
 	}
@@ -253,7 +253,6 @@ void sineWave(int delay){
 		SysTick_Wait(delay); 
 	}
 }
-
 
 void Init_PortB(void){ 
   SYSCTL_RCGC2_R |= 0x00000002;     // 1) B clock
