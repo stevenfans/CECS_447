@@ -73,12 +73,12 @@ void UART_Init(void){
 void UART1_Init(void){
   SYSCTL_RCGC1_R |= 0x02; // activate UART1
   SYSCTL_RCGC2_R |= 0x02; // activate port B
-  UART1_CTL_R &= ~0x01;      // disable UART    extra: 325/22 
+  UART1_CTL_R &= ~0x01;      // disable UART    extra: 325/33
   UART1_IBRD_R = 54;                    // IBRD = int(50,000,000 / (16 * 57600)) = int(54.25347)
   UART1_FBRD_R = 16;                     // FBRD = int(0.25347 * 64 + 0.5) = 16
                                         // 8 bit word length (no parity bits, one stop bit, FIFOs)
-  UART1_LCRH_R = (UART_LCRH_WLEN_8|UART_LCRH_FEN);
-  UART1_CTL_R |= 0x01;       // enable UART
+  UART1_LCRH_R = 0x76; 									// 8 bit word length ( parity Even)
+  UART1_CTL_R |= 0x01;       						// enable UART
   GPIO_PORTB_AFSEL_R |= 0x03;           // enable alt funct on PB1-0
   GPIO_PORTB_DEN_R |= 0x03;             // enable digital I/O on PB1-0
                                         // configure PA1-0 as UART
@@ -195,7 +195,7 @@ void UART_OutUDec(unsigned long n){
     UART_OutUDec(n/10);
     n = n%10;
   }
-  UART_OutChar(n+'0'); /* n is between 0 and 9 */
+  UART_OutChar(n+'0'); /* n is b	etween 0 and 9 */
 }
 
 //---------------------UART_InUHex----------------------------------------
@@ -371,6 +371,15 @@ char character;
   *bufPt = 0;
 }
 
+//---------------------OutCRLF1---------------------
+// Output a CR,LF to UART to go to a new line
+// Input: none
+// Output: none
+void OutCRLF1(void){
+  UART1_OutChar(CR);
+  UART1_OutChar(LF);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 //------------UART2_InChar------------
 // Wait for new serial port input
@@ -419,4 +428,13 @@ char character;
     character = UART2_InChar();
   }
   *bufPt = 0;
+}
+
+//---------------------OutCRLF---------------------
+// Output a CR,LF to UART to go to a new line
+// Input: none
+// Output: none
+void OutCRLF2(void){
+  UART2_OutChar(CR);
+  UART2_OutChar(LF);
 }

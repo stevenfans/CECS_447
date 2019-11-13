@@ -37,7 +37,7 @@ void sineWave(int delay);
 void Init_PortB(void);
 void EnableInterrupts(void);
 int top = -1;unsigned char hello[100];
-void push(unsigned char x);
+unsigned long stringToNumber(char string[4]); 
 
 const int sineTable[256]={128,131,134,137,140,143,146,149,
 152,156,159,162,165,168,171,174,
@@ -89,7 +89,8 @@ char a = 0x0FF;
 char checkSum;
 int k,j;
 int sum = 0;
-int isValid;char steven[20];
+unsigned long pwm_value;
+char steven[20];
 unsigned long d;
 	
 	SysTick_Init();
@@ -103,31 +104,19 @@ unsigned long d;
 	
 	PORTF_Init();
 	EnableInterrupts();          		 	//AFTER inits, 
-	
 	PLL_Init();
 	
   GPIO_PORTF_DATA_R = 0x02; // Red
-	
-//	UART_OutString("UART Initialized"); OutCRLF();
-//	UART_OutString("Sine     (S)"); OutCRLF();
-//	UART_OutString("Triangle (T)"); OutCRLF();
-//	UART_OutString("Square   (Q)"); OutCRLF();
-//	UART_OutString("Sawtooth (R)"); OutCRLF();
-//	
-//	UART_OutString("Enter");OutCRLF();
-//	UART1_OutString("AT\r\n");
-	SysTick_Wait(1000); 
-	UART1_OutString("AT+NAME=PHANWELL\r\n");
-	SysTick_Wait(1000); 
+
+//UART1_OutString("AT+PSWD=4321\r\n");
+ //UART1_InString(string,19);
+  //UART1_OutString(" OutString="); UART1_OutString(string); OutCRLF();
+	SysTick_Wait(1000000);
+	UART1_OutString("AT+PSWD=4321\r\n");
 	//UART_OutString("InString: ");
   //UART1_InString(string,19);
   //UART1_OutString(" OutString="); UART1_OutString(string); OutCRLF();
-	//SysTick_Wait(1000);
-	UART1_OutString("AT+PSWD=1234\r\n");
-	//UART_OutString("InString: ");
-  //UART1_InString(string,19);
-  //UART1_OutString(" OutString="); UART1_OutString(string); OutCRLF();
-	SysTick_Wait(1000);
+	SysTick_Wait(10000000);
 ////	UART_InString(string, 1);
 //	UART1_OutString("AT");
 //	//UART_OutString("InString: ");
@@ -139,78 +128,35 @@ unsigned long d;
 //	SysTick_Wait(1000); 
 //	
 	UART1_OutString("AT+UART=57600,0,2\r\n"); 
-//	SysTick_Wait(1000); 
+	//SysTick_Wait(10000000); 
 
 	GPIO_PORTF_DATA_R = 0x04; 
+	UART_OutString("TESTS"); 
 	
   while(1){
-		
-//		
-//				c = UART_InChar();
-//				//UART_OutChar('j');
-//				UART_OutChar(c); //OutCRLF(); 
-//				if (c != 0x00){
-//					GPIO_PORTF_DATA_R = 0x0E; 
-//				}
-//		
-//		UART1_OutString("Enter: "); 
-//		UART1_InString(string, 20); OutCRLF(); 
-//		UART1_OutString("String: "); UART1_OutString(string); OutCRLF(); 
-//		GPIO_PORTF_DATA_R = 0x08; 
-
-		
-}
-
-//			cmd = UART_InCharNonBlocking();
-//			
-//			if ( cmd == "AT\r\n"){
-//				
-//			}
 			
-//		c = UART_InCharNonBlocking();
-//		
-//		
-//		if (c=='s') {
-//			UART_OutString("sine wave displayed");
-//			OutCRLF();
-//			previous = 's';
-//			
-//		}
-//		else if (c=='t'){
-//			UART_OutString("triangle wave displayed");
-//			OutCRLF();
-//			previous = 't';
-//		}
-//		else if (c == 'q'){
-//			UART_OutString("square wave displayed");
-//			OutCRLF();
-//			previous = 'q';
-//		}
-//		else if (c == 'r'){
-//			UART_OutString("Sawtooth wave displayed");
-//			OutCRLF();
-//			previous = 'r';
-//		}
-//		else if (c=='0'){
-//			// No message
-//			previous = previous;
-//		}
-//			
-//    if (previous == 'r'){
-//			sawtoothWave(5150);
-//		}
-//		else if (previous == 't'){
-//			triangleWave(2550); 
-//		}
-//		else if (previous == 's'){
-//			sineWave(5150);
-//		}
-//		else if (previous == 'q'){
-//			squareWave(2550);
-//			
-//		}
-		//else { sawtooth default }
+		UART1_OutString("Enter Something: "); 
+		UART1_InString(string, 10);
+		k += 1; 
+		//UART_OutUDec(9); 
+		
+		// check to see if the first char is for frequency or blink led change
+		if (string[0] == 'f'){
+			UART1_OutString(string); OutCRLF();
+			// send frequency to UART 2
+			GPIO_PORTF_DATA_R = 0x02; 
+			
+		}
+		else if  (string[0] == 'b'){
+			UART1_OutString(string); OutCRLF1();
+			pwm_value = stringToNumber(string); 
+			UART_OutUDec(pwm_value); 
+			//dim lights 
+			GPIO_PORTF_DATA_R = 0x0A; 
+		}
+		OutCRLF1();
 	}
+}
 
 
 // Color    LED(s) PortF
@@ -222,6 +168,19 @@ unsigned long d;
 // sky blue -GB    0x0C	
 // white    RGB    0x0E
 // pink     R-B    0x06
+
+
+unsigned long stringToNumber(char string[4]){
+	int i;  
+	unsigned long answer = 0; 
+	int place_value = 1; 
+	
+	for (i=3;i>0;i--){
+		answer += place_value * (int)(string[i]-'0'); // convert decimal to char   
+		place_value *= 10; 
+	}
+	return answer; 
+}
 
 // global variable visible in Watch window of debugger
 // increments at least once per button press

@@ -130,9 +130,11 @@ unsigned char UART1_InChar(void);
 void UART1_OutChar(unsigned char data); 
 void UART1_OutString(char *pt);
 unsigned char UART1_InCharNonBlocking(void);
+void OutCRLF1(void); 
 
 //------------UART 2 Functions-------------------
 unsigned char UART2_InChar(void); 
 void UART2_OutChar(unsigned char data); 
 void UART2_OutString(char *pt);
 unsigned char UART2_InCharNonBlocking(void);
+void OutCRLF1(void); 
