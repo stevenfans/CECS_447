@@ -1,0 +1,52 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Project:</h2>
+C:\Users\Rosswell\Documents\Tone-Generator\TM4C_2\UART.uvproj
+Project File Date:  11/12/2019
+
+<h2>Output:</h2>
+Rebuild target 'UART'
+assembling startup.s...
+compiling PLL.c...
+compiling UART.c...
+UART.c(249): warning:  #1-D: last line of file ends without a newline
+  }
+UART.c: 1 warning, 0 errors
+compiling UARTTestMain.c...
+compiling Tone.c...
+compiling SysTick.c...
+linking...
+Program Size: Code=2064 RO-data=1056 RW-data=4 ZI-data=1124  
+".\UART.axf" - 0 Error(s), 1 Warning(s).
+Load "C:\\Users\\Rosswell\\Documents\\Tone-Generator\\TM4C_2\\UART.axf" 
+Connecting: Mode=JTAG, Speed=1000000Hz
+Erase Done.
+Programming Done.
+Verify OK.
+</pre>
+</body>
+</html>
+error:  #20: identifier "UART2_FBRD_R" is undefined
+    UART2_FBRD_R = 33;                     // FBRD = int(0.52083 * 64 + 0.5) = 33
+UART.c(257): error:  #20: identifier "UART2_LCRH_R" is undefined
+    UART2_LCRH_R = 0x70; 
+UART.c(259): error:  #20: identifier "GPIO_PORTD_CR_R" is undefined
+        GPIO_PORTD_CR_R |= 0x80;  
+UART.c(260): error:  #20: identifier "GPIO_PORTD_AFSEL_R" is undefined
+    GPIO_PORTD_AFSEL_R |= 0xC0;           // enable alt funct on PD6-7
+UART.c(261): error:  #20: identifier "GPIO_PORTD_DEN_R" is undefined
+    GPIO_PORTD_DEN_R |= 0x0C0;             // enable digital I/O on PD7-6
+UART.c(263): error:  #20: identifier "GPIO_PORTD_PCTL_R" is undefined
+        GPIO_PORTD_PCTL_R &= ~0xFF000000; 
+UART.c(266): error:  #20: identifier "GPIO_PORTD_AMSEL_R" is undefined
+    GPIO_PORTD_AMSEL_R &= ~0xC0;          // disable analog functionality on PD
+UART.c(267): warning:  #1-D: last line of file ends without a newline
+  }
+UART.c: 1 warning, 10 errors
+compiling UARTTestMain.c...
+compiling Tone.c...
+compiling SysTick.c...
+".\UART.axf" - 10 Error(s), 1 Warning(s).
+Target not created
