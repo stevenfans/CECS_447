@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\UART.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\UART.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Tue Nov 12 19:47:59 2019
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Tue Nov 12 20:36:22 2019
 <BR><P>
 <H3>Maximum Stack Usage =         68 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -794,8 +794,10 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[9f]"></a>PORTF_Init</STRONG> (Thumb, 258 bytes, Stack size 0 bytes, uarttestmain.o(i.PORTF_Init))
-<BR><BR>[Called By]<UL><LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<P><STRONG><a name="[9f]"></a>PWM_Init</STRONG> (Thumb, 180 bytes, Stack size 8 bytes, pwm.o(i.PWM_Init))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = PWM_Init
+</UL>
+<BR>[Called By]<UL><LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
 <P><STRONG><a name="[9b]"></a>SysTick_Init</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, systick.o(i.SysTick_Init))
@@ -868,14 +870,14 @@ Global Symbols
 <LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_OutUDec
 </UL>
 
-<P><STRONG><a name="[89]"></a>main</STRONG> (Thumb, 172 bytes, Stack size 56 bytes, uarttestmain.o(i.main))
+<P><STRONG><a name="[89]"></a>main</STRONG> (Thumb, 180 bytes, Stack size 56 bytes, uarttestmain.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 68 + Unknown Stack Size
 <LI>Call Chain = main &rArr; UART_OutUDec &rArr;  UART_OutUDec (Cycle)
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SysTick_Wait
 <LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SysTick_Init
+<LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PWM_Init
 <LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stringToNumber
-<LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PORTF_Init
 <LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Init_PortB
 <LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_OutUDec
 <LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_OutString

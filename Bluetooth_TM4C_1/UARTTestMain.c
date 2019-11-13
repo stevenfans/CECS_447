@@ -27,7 +27,7 @@
 #include "PLL.h"
 #include "UART.h"
 #include "SysTick.h"
-
+#include "PWM.h"
 
 void PORTF_Init(void);
 void sawtoothWave(int delay);
@@ -102,7 +102,8 @@ unsigned long d;
 	
   OutCRLF();
 	
-	PORTF_Init();
+	//PORTF_Init();
+	PWM_Init(40000, 30000); 
 	EnableInterrupts();          		 	//AFTER inits, 
 	PLL_Init();
 	
