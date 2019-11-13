@@ -93,20 +93,20 @@ void UART2_Init(void){
   SYSCTL_RCGC1_R |= 0x04; // activate UART2
   delay = SYSCTL_RCGC2_R;           // reading register adds a delay   
   SYSCTL_RCGC2_R |= 0x08; // activate port D
-	GPIO_PORTF_LOCK_R = 0x4C4F434B;	// unlock portD
-  UART1_CTL_R &= ~0x01;      // disable UART    extra: 325/22 
-  UART1_IBRD_R = 325;                    // IBRD = int(50,000,000 / (16 * 9600)) = int(325.52083)
-  UART1_FBRD_R = 33;                     // FBRD = int(0.52083 * 64 + 0.5) = 33
+	GPIO_PORTD_LOCK_R = 0x4C4F434B;	// unlock portD
+  UART2_CTL_R &= ~0x01;      						// disable UART    extra: 325/22 
+  UART2_IBRD_R = 325;                    // IBRD = int(50,000,000 / (16 * 9600)) = int(325.52083)
+  UART2_FBRD_R = 33;                     // FBRD = int(0.52083 * 64 + 0.5) = 33
                                         // 8 bit word length (no parity bits, one stop bit, FIFOs)
-  UART1_LCRH_R = (UART_LCRH_WLEN_8|UART_LCRH_FEN);
-  UART1_CTL_R |= 0x01;       // enable UART
-  GPIO_PORTB_AFSEL_R |= 0xC0;           // enable alt funct on PD6-7
-  GPIO_PORTB_DEN_R |= 0x0C0;             // enable digital I/O on PB1-0
+  UART2_LCRH_R = 0x70; 
+  UART2_CTL_R |= 0x01;       						// enable UART
+  GPIO_PORTD_AFSEL_R |= 0xC0;           // enable alt funct on PD6-7
+  GPIO_PORTD_DEN_R |= 0x0C0;             // enable digital I/O on PD7-6
                                         // configure PA1-0 as UART
-  //GPIO_PORTB_PCTL_R = (GPIO_PORTB_PCTL_R&0xFFFFFF00)+0x00000011;
-	GPIO_PORTB_PCTL_R &= ~0xFF000000; 
-	GPIO_PORTB_PCTL_R |=  0x11000000; 
-  GPIO_PORTB_AMSEL_R &= ~0xC0;          // disable analog functionality on PA
+	GPIO_PORTD_PCTL_R &= ~0xFF000000; 
+	GPIO_PORTD_PCTL_R |=  0x11000000; 
+	
+  GPIO_PORTD_AMSEL_R &= ~0xC0;          // disable analog functionality on PD
 }
 
 //------------UART_InChar------------
@@ -428,6 +428,13 @@ char character;
     character = UART2_InChar();
   }
   *bufPt = 0;
+}
+
+void UART2_OutString(char *pt){
+  while(*pt){
+    UART2_OutChar(*pt);
+    pt++;
+  }
 }
 
 //---------------------OutCRLF---------------------

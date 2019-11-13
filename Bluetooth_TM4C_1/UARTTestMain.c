@@ -97,7 +97,7 @@ unsigned long d;
   
   UART_Init();              // initialize UART
   UART1_Init(); 						// initialize UART1
-	
+	UART2_Init(); 						// initialize UART2
 	
   OutCRLF();
 	
@@ -133,6 +133,8 @@ unsigned long d;
 	GPIO_PORTF_DATA_R = 0x04; 
 	UART_OutString("UART Initilized"); 
 	
+	UART2_OutString("UART INITIALIZED"); 
+	
   while(1){
 			
 		UART1_OutString("Enter Something: "); 
@@ -154,6 +156,7 @@ unsigned long d;
 			//dim lights 
 			PWM_PF1_Duty(pwm_value); 
 			//GPIO_PORTF_DATA_R = 0x0A; 
+			//UART2_OutChar('v'); 
 		}
 		OutCRLF1();
 	}
