@@ -75,22 +75,19 @@ const int sineTable[256]={128,131,134,137,140,143,146,149,
 int main(void){
 	unsigned char x;
   unsigned char i;
-	char *bfptr;
-	char cmd; 
-  char string[50];  // global to assist in debugging
-  unsigned long c;
+  char string[5];  // global to assist in debugging
+	char new_string[10];  // global to assist in debugging
+  unsigned int value; 
+	unsigned long c;
 	unsigned long previous = 'r'; //default r: sawtooth
 	
 	/////
 	unsigned char n;																		
-unsigned char data;
-char a = 0x0FF;
-char checkSum;
-int k,j;
-int sum = 0;
-unsigned long pwm_value;
-char steven[20];
-unsigned long d;
+	unsigned char isFrequency = 0x00; // flag to check if there is an f 
+	char a = 0xFF;
+	int k,j;
+	int sum = 0;
+	unsigned long pwm_value, freq_value;
 	
 	SysTick_Init();
 	Init_PortB();
@@ -101,22 +98,20 @@ unsigned long d;
 	
   OutCRLF();
 	
-	//PORTF_Init();
-	PWM_Init(255, 250); 
+	//PORTF_Init(); 
+	PWM_Init(40000, 39000); 
 	EnableInterrupts();          		 	//AFTER inits, 
 	PLL_Init();
-	
-  GPIO_PORTF_DATA_R = 0x02; // Red
 
 //UART1_OutString("AT+PSWD=4321\r\n");
  //UART1_InString(string,19);
   //UART1_OutString(" OutString="); UART1_OutString(string); OutCRLF();
-	SysTick_Wait(1000000);
-	UART1_OutString("AT+PSWD=4321\r\n");
+//	SysTick_Wait(1000000);
+//	UART1_OutString("AT+PSWD=4321\r\n");
 	//UART_OutString("InString: ");
   //UART1_InString(string,19);
   //UART1_OutString(" OutString="); UART1_OutString(string); OutCRLF();
-	SysTick_Wait(10000000);
+	//SysTick_Wait(10000000);
 ////	UART_InString(string, 1);
 //	UART1_OutString("AT");
 //	//UART_OutString("InString: ");
@@ -128,37 +123,33 @@ unsigned long d;
 //	SysTick_Wait(1000); 
 //	
 	UART1_OutString("AT+UART=57600,0,2\r\n"); 
+	UART2_OutString("AT+UART=57600,0,2\r\n"); 
 	//SysTick_Wait(10000000); 
 
-	GPIO_PORTF_DATA_R = 0x04; 
-	UART_OutString("UART Initilized"); 
-	
-	UART2_OutString("UART INITIALIZED"); 
-	
   while(1){
-			
-		UART1_OutString("Enter Something: "); 
-		UART1_InString(string, 10);
-		k += 1; 
-		//UART_OutUDec(9); 
 		
-		// check to see if the first char is for frequency or blink led change
+		UART1_OutString("Enter Something: "); 
+		UART1_InString(string, 5);  
+		UART_OutChar(string[0]);
+		OutCRLF();
+		
+//		// check to see if the first char is for frequency or blink led change
 		if (string[0] == 'f'){
-			UART1_OutString(string); OutCRLF();
-			// send frequency to UART 2
-			GPIO_PORTF_DATA_R = 0x02; 
-			
+			// parse and get the number
+			freq_value=stringToNumber(string);
+			UART_OutUDec(freq_value); OutCRLF(); 
+			// output to the the second TM4C
+			UART2_OutUDec(freq_value); OutCRLF2();
+			//GPIO_PORTF_DATA_R  =0x06; 
 		}
-		else if  (string[0] == 'b'){
-			UART1_OutString(string); OutCRLF1();
-			pwm_value = stringToNumber(string); 
-			UART_OutUDec(pwm_value); 
+		else{
+			// parse and get the number
+			pwm_value = stringToNumber(string);
+			//GPIO_PORTF_DATA_R = 0x04; 
 			//dim lights 
-			PWM_PF1_Duty(pwm_value); 
-			//GPIO_PORTF_DATA_R = 0x0A; 
-			//UART2_OutChar('v'); 
+			value = (pwm_value/255)*39000; 
+			PWM_PF1_Duty(value);  
 		}
-		OutCRLF1();
 	}
 }
 
@@ -174,15 +165,16 @@ unsigned long d;
 // pink     R-B    0x06
 
 
-unsigned long stringToNumber(char string[4]){
+unsigned long stringToNumber(char string[5]){
 	int i;  
-	unsigned long answer = 0; 
+	int answer = 0; 
 	int place_value = 1; 
 	
 	for (i=3;i>0;i--){
-		answer += place_value * (int)(string[i]-'0'); // convert decimal to char   
+		answer += place_value * (string[i]-'0'); // convert decimal to char   
 		place_value *= 10; 
 	}
+	UART_OutUDec(answer); OutCRLF(); 
 	return answer; 
 }
 

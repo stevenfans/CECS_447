@@ -233,8 +233,8 @@ void UART2_Init(void){
   SYSCTL_RCGC2_R |= 0x08; // activate port D
 	GPIO_PORTD_LOCK_R = 0x4C4F434B;	// unlock portD
   UART2_CTL_R &= ~0x01;      						// disable UART    extra: 325/22 
-  UART2_IBRD_R = 325;                    // IBRD = int(50,000,000 / (16 * 9600)) = int(325.52083)
-  UART2_FBRD_R = 33;                     // FBRD = int(0.52083 * 64 + 0.5) = 33
+  UART2_IBRD_R = 520;                    // IBRD = int(50,000,000 / (16 * 9600)) = int(325.52083)
+  UART2_FBRD_R = 53;                     // FBRD = int(0.52083 * 64 + 0.5) = 33
 																					// 8 bit word length (no parity bits, one stop bit, FIFOs)
   UART2_LCRH_R = 0x70; 
   UART2_CTL_R |= 0x01;       						// enable UART
@@ -246,4 +246,103 @@ void UART2_Init(void){
 	GPIO_PORTD_PCTL_R |=  0x11000000; 
 	
   GPIO_PORTD_AMSEL_R &= ~0xC0;          // disable analog functionality on PD
+}
+
+/////////////////////////////////////////////////////////
+//------------UART2_InChar------------
+// Wait for new serial port input
+// Input: none
+// Output: ASCII code for key typed
+unsigned char UART2_InChar(void){
+  while((UART2_FR_R&UART_FR_RXFE) != 0);
+  return((unsigned char)(UART2_DR_R&0xFF));
+}
+//------------UART2_OutChar------------
+// Output 8-bit to serial port
+// Input: letter is an 8-bit ASCII character to be transferred
+// Output: none
+void UART2_OutChar(unsigned char data){
+  while((UART2_FR_R&UART_FR_TXFF) != 0);
+  UART2_DR_R = data;
+}
+
+
+unsigned char UART2_InCharNonBlocking(void){
+// as part of Lab 11, modify this program to use UART0 instead of UART1
+  if((UART2_FR_R&UART_FR_RXFE) == 0){
+    return((unsigned char)(UART2_DR_R&0xFF));
+  } else{
+    return 0;
+  }
+}
+
+void UART2_InString(char *bufPt, unsigned short max) {
+int length=0;
+char character;
+  character = UART2_InChar();
+  while(character != CR){
+    if(character == BS){
+      if(length){
+        bufPt--;
+        length--;
+        UART2_OutChar(BS);
+      }
+    }
+    else if(length < max){
+      *bufPt = character;
+      bufPt++;
+      length++;
+      UART2_OutChar(character);
+    }
+    character = UART2_InChar();
+  }
+  *bufPt = 0;
+}
+
+void UART2_OutString(char *pt){
+  while(*pt){
+    UART2_OutChar(*pt);
+    pt++;
+  }
+}
+
+unsigned long UART2_InUDec(void){
+	unsigned long number=0, length=0;
+	char character;
+  character = UART2_InChar();
+  while(character != CR){ // accepts until <enter> is typed
+// The next line checks that the input is a digit, 0-9.
+// If the character is not 0-9, it is ignored and not echoed
+    if((character>='0') && (character<='9')) {
+      number = 10*number+(character-'0');   // this line overflows if above 4294967295
+      length++;
+      UART2_OutChar(character);
+    }
+// If the input is a backspace, then the return number is
+// changed and a backspace is outputted to the screen
+    else if((character==BS) && length){
+      number /= 10;
+      length--;
+      UART2_OutChar(character);
+    }
+    character = UART2_InChar();
+  }
+  return number;
+}
+	void UART2_OutUDec(unsigned long n){
+// This function uses recursion to convert decimal number
+//   of unspecified length as an ASCII string
+  if(n >= 10){
+    UART2_OutUDec(n/10);
+    n = n%10;
+  }
+  UART2_OutChar(n+'0'); /* n is between 0 and 9 */
+}
+//---------------------OutCRLF---------------------
+// Output a CR,LF to UART to go to a new line
+// Input: none
+// Output: none
+void OutCRLF2(void){
+  UART2_OutChar(CR);
+  UART2_OutChar(LF);
 }

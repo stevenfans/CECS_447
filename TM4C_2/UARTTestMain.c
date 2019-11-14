@@ -17,17 +17,29 @@ void OutCRLF(void){
 
 int main(void){
 	unsigned long frequency = 262;
+	unsigned long freq_value;  
+	char string [10]; 
 	
 	PLL_Init();
   UART_Init();
+	UART2_Init();
 	
 	Init_PortB();
 	PORTF_Init();
-	
+	GPIO_PORTF_DATA_R = 0x08; 
+	UART2_OutString("TEEST"); 
   while(1){
-		SysTick_Init(80000000/256/frequency); // Clk / sine wave steps / desired frequency
-    UART_OutString("InUDec: ");  frequency=UART_InUDec();
-    UART_OutString(" OutUDec="); UART_OutUDec(frequency); OutCRLF();
+		//SysTick_Init(80000000/256/frequency); // Clk / sine wave steps / desired frequency
+		
+    //UART_OutString("InUDec: ");  frequency=UART_InUDec();
+    //UART_OutString(" OutUDec="); UART_OutUDec(frequency); OutCRLF();
+		
+		freq_value = UART2_InUDec(); 
+		//UART2_InString(string, 10);
+		//GPIO_PORTF_DATA_R = 0x0A; //yellow
+		if (freq_value == 321){
+			GPIO_PORTF_DATA_R = 0x04; //blue
+		}
   }
 }
 

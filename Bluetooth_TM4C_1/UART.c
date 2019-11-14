@@ -100,7 +100,7 @@ void UART2_Init(void){
 																					// 8 bit word length (no parity bits, one stop bit, FIFOs)
   UART2_LCRH_R = 0x70; 
   UART2_CTL_R |= 0x01;       						// enable UART
-	GPIO_PORTD_CR_R |= 0x80; 
+	GPIO_PORTD_CR_R |= 0x80;  
   GPIO_PORTD_AFSEL_R |= 0xC0;           // enable alt funct on PD6-7
   GPIO_PORTD_DEN_R |= 0x0C0;             // enable digital I/O on PD7-6
                                         // configure PA1-0 as UART
@@ -196,7 +196,7 @@ void UART_OutUDec(unsigned long n){
     UART_OutUDec(n/10);
     n = n%10;
   }
-  UART_OutChar(n+'0'); /* n is b	etween 0 and 9 */
+  UART_OutChar(n+'0'); /* n is between 0 and 9 */
 }
 
 //---------------------UART_InUHex----------------------------------------
@@ -349,6 +349,7 @@ unsigned char UART1_InCharNonBlocking(void){
   }
 }
 
+/*
 void UART1_InString(char *bufPt, unsigned short max) {
 int length=0;
 char character;
@@ -362,6 +363,31 @@ char character;
       }
     }
     else if(length < max){
+      *bufPt = character;
+      bufPt++;
+      length++;
+      UART1_OutChar(character);
+    }
+    character = UART1_InChar();
+  }
+  *bufPt = 0;
+}
+*/
+void UART1_InString(char *bufPt, unsigned short max) {
+char return_digits[3];
+int length=0;
+char character;
+  character = UART1_InChar();
+  while(character != CR){
+    if(character == BS){
+      if(length){
+        bufPt--;
+        length--;
+        UART1_OutChar(BS);
+      }
+    }
+    else if(length < max){
+			
       *bufPt = character;
       bufPt++;
       length++;
@@ -408,34 +434,26 @@ unsigned char UART2_InCharNonBlocking(void){
   }
 }
 
-void UART2_InString(char *bufPt, unsigned short max) {
-int length=0;
-char character;
-  character = UART2_InChar();
-  while(character != CR){
-    if(character == BS){
-      if(length){
-        bufPt--;
-        length--;
-        UART2_OutChar(BS);
-      }
-    }
-    else if(length < max){
-      *bufPt = character;
-      bufPt++;
-      length++;
-      UART2_OutChar(character);
-    }
-    character = UART2_InChar();
-  }
-  *bufPt = 0;
-}
-
 void UART2_OutString(char *pt){
   while(*pt){
     UART2_OutChar(*pt);
     pt++;
   }
+}
+
+//-----------------------UART_OutUDec-----------------------
+// Output a 32-bit number in unsigned decimal format
+// Input: 32-bit number to be transferred
+// Output: none
+// Variable format 1-10 digits with no space before or after
+	void UART2_OutUDec(unsigned long n){
+// This function uses recursion to convert decimal number
+//   of unspecified length as an ASCII string
+  if(n >= 10){
+    UART2_OutUDec(n/10);
+    n = n%10;
+  }
+  UART2_OutChar(n+'0'); /* n is between 0 and 9 */
 }
 
 //---------------------OutCRLF---------------------

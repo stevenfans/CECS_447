@@ -139,4 +139,11 @@ void UART2_OutChar(unsigned char data);
 void UART2_OutString(char *pt);
 void UART2_InString(char *bufPt, unsigned short max);
 unsigned char UART2_InCharNonBlocking(void);
+void UART2_OutUDec(unsigned long n);
 void OutCRLF2(void); 
+
+
+
+char UART_ReturnString(char *pt); 
+char UART_ReturnChar(unsigned char data); 
+
