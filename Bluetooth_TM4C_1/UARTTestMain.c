@@ -130,8 +130,8 @@ int main(void){
 		
 		UART1_OutString("Enter Something: "); 
 		UART1_InString(string, 5);  
-		UART_OutChar(string[0]);
-		OutCRLF();
+		//UART_OutChar(string[0]);
+		//OutCRLF();
 		
 //		// check to see if the first char is for frequency or blink led change
 		if (string[0] == 'f'){
@@ -145,10 +145,11 @@ int main(void){
 		else{
 			// parse and get the number
 			pwm_value = stringToNumber(string);
-			//GPIO_PORTF_DATA_R = 0x04; 
+			UART_OutUDec(pwm_value); OutCRLF(); 
 			//dim lights 
-			value = (pwm_value/255)*39000; 
-			PWM_PF1_Duty(value);  
+			pwm_value = (int)((((float)pwm_value/255)*38000)+1000)/10; 
+			UART_OutUDec(pwm_value); OutCRLF(); 
+			PWM_PF1_Duty(pwm_value);  
 		}
 	}
 }
@@ -174,7 +175,7 @@ unsigned long stringToNumber(char string[5]){
 		answer += place_value * (string[i]-'0'); // convert decimal to char   
 		place_value *= 10; 
 	}
-	UART_OutUDec(answer); OutCRLF(); 
+	//UART_OutUDec(answer); OutCRLF(); 
 	return answer; 
 }
 

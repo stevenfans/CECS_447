@@ -26,7 +26,14 @@ Project File Date:  11/12/2019
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
-Build target 'UART'
+Rebuild target 'UART'
+assembling startup.s...
+compiling PLL.c...
+compiling SysTick.c...
+compiling UART.c...
+UART.c(377): warning:  #177-D: variable "return_digits"  was declared but never referenced
+  char return_digits[3];
+UART.c: 1 warning, 0 errors
 compiling UARTTestMain.c...
 UARTTestMain.c(76): warning:  #177-D: variable "x"  was declared but never referenced
   	unsigned char x;
@@ -34,6 +41,8 @@ UARTTestMain.c(77): warning:  #177-D: variable "i"  was declared but never refer
     unsigned char i;
 UARTTestMain.c(79): warning:  #177-D: variable "new_string"  was declared but never referenced
   	char new_string[10];  // global to assist in debugging
+UARTTestMain.c(80): warning:  #177-D: variable "value"  was declared but never referenced
+    unsigned int value; 
 UARTTestMain.c(81): warning:  #177-D: variable "c"  was declared but never referenced
   	unsigned long c;
 UARTTestMain.c(82): warning:  #177-D: variable "previous"  was declared but never referenced
@@ -50,10 +59,14 @@ UARTTestMain.c(88): warning:  #177-D: variable "j"  was declared but never refer
   	int k,j;
 UARTTestMain.c(89): warning:  #177-D: variable "sum"  was declared but never referenced
   	int sum = 0;
-UARTTestMain.c: 11 warnings, 0 errors
+UARTTestMain.c: 12 warnings, 0 errors
+compiling PWM.c...
+PWM.c(34): warning:  #1-D: last line of file ends without a newline
+  }
+PWM.c: 1 warning, 0 errors
 linking...
-Program Size: Code=2472 RO-data=16 RW-data=0 ZI-data=1120  
-".\UART.axf" - 0 Error(s), 11 Warning(s).
+Program Size: Code=3828 RO-data=16 RW-data=0 ZI-data=1120  
+".\UART.axf" - 0 Error(s), 14 Warning(s).
 Build Time Elapsed:  00:00:02
 </pre>
 </body>
