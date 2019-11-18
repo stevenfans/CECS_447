@@ -140,14 +140,13 @@ int main(void){
 			UART_OutUDec(freq_value); OutCRLF(); 
 			// output to the the second TM4C
 			UART2_OutUDec(freq_value); OutCRLF2();
-			//GPIO_PORTF_DATA_R  =0x06; 
 		}
 		else{
 			// parse and get the number
 			pwm_value = stringToNumber(string);
 			UART_OutUDec(pwm_value); OutCRLF(); 
 			//dim lights 
-			pwm_value = (int)((((float)pwm_value/255)*38000)+1000)/10; 
+			pwm_value = (int)((((float)pwm_value/255)*38000)+1000);///10; 
 			UART_OutUDec(pwm_value); OutCRLF(); 
 			PWM_PF1_Duty(pwm_value);  
 		}
@@ -166,14 +165,17 @@ int main(void){
 // pink     R-B    0x06
 
 
-unsigned long stringToNumber(char string[5]){
+unsigned long stringToNumber(char string[4]){
 	int i;  
 	int answer = 0; 
 	int place_value = 1; 
 	
 	for (i=3;i>0;i--){
+		if (string[i]!=CR&&string[i]!=LF&&
+				string[i]!='0'&&string[i]!=0){
 		answer += place_value * (string[i]-'0'); // convert decimal to char   
 		place_value *= 10; 
+		}
 	}
 	//UART_OutUDec(answer); OutCRLF(); 
 	return answer; 
@@ -206,48 +208,6 @@ void PORTF_Init(void){
   GPIO_PORTF_IM_R |= 0x10;      // (f) arm interrupt on PF4
   NVIC_PRI7_R = (NVIC_PRI7_R&0xFF00FFFF)|0x00A00000; // (g) priority 5
   NVIC_EN0_R = 0x40000000;      // (h) enable interrupt 30 in NVIC
-}
-
-
-void sawtoothWave(int delay){
-	unsigned int i; 
-	for (i = 0; i < 256; i++){
-		GPIO_PORTB_DATA_R = i ; 	
-		SysTick_Wait(5100); 
-	}
-}
-
-void triangleWave(int delay){
-	unsigned int i; 
-	for (i = 0; i < 256; i++){
-		GPIO_PORTB_DATA_R = i; 
-		SysTick_Wait(delay);
-	}
-	 
-	for (i = 255; i>0; i--){
-		GPIO_PORTB_DATA_R = i; 
-		SysTick_Wait(delay); 
-	}
-}
-
-void squareWave (int delay){
-	unsigned int i; 
-	for (i = 0; i < 256; i++){
-		GPIO_PORTB_DATA_R = 0xFF; 
-		SysTick_Wait(delay);
-	}
-	 
-	for (i = 255; i>0; i--){
-		GPIO_PORTB_DATA_R = 0x00; 
-		SysTick_Wait(delay); 
-	}
-}
-void sineWave(int delay){	
-	unsigned int i ; 
-	for(i=0; i<256; i++){
-		GPIO_PORTB_DATA_R = sineTable[i]; 
-		SysTick_Wait(delay); 
-	}
 }
 
 void Init_PortB(void){ 
