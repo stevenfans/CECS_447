@@ -26,6 +26,6 @@ void PWM_Init(uint16_t period, uint16_t duty){
 	PWM1_ENABLE_R |= 0x40;					// enable pf2/mw1pwm6
 }
 
-void PWM_PF1_Duty(uint16_t duty){
+void PWM_PF2_Duty(uint16_t duty){
 	PWM1_3_CMPA_R = duty - 1; 
 }
