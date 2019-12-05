@@ -406,26 +406,34 @@
           <GroupName>Source</GroupName>
           <Files>
             <File>
-              <FileName>main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\main.c</FilePath>
-            </File>
-            <File>
               <FileName>startup.s</FileName>
               <FileType>2</FileType>
               <FilePath>.\startup.s</FilePath>
+            </File>
+            <File>
+              <FileName>lab2_graphics.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\lab2_graphics.c</FilePath>
+            </File>
+            <File>
+              <FileName>PLL.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\PLL.c</FilePath>
+            </File>
+            <File>
+              <FileName>ST7735.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\ST7735.c</FilePath>
+            </File>
+            <File>
+              <FileName>walking.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\walking.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
           <GroupName>Object code</GroupName>
-          <Files>
-            <File>
-              <FileName>texas.o</FileName>
-              <FileType>3</FileType>
-              <FilePath>.\texas.o</FilePath>
-            </File>
-          </Files>
         </Group>
       </Groups>
     </Target>

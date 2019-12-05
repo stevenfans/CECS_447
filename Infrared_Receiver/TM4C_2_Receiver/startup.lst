@@ -14,7 +14,7 @@ ARM Macro Assembler    Page 1
     6 00000000         ; Copyright (c) 2012 Texas Instruments Incorporated.  Al
                        l rights reserved.
     7 00000000         ; Software License Agreement
-    8 00000000         ; 
+    8 00000000         ;
     9 00000000         ; Texas Instruments (TI) is supplying this software for 
                        use solely and
    10 00000000         ; exclusively on TI's microcontroller products. The soft
@@ -24,7 +24,7 @@ ARM Macro Assembler    Page 1
    12 00000000         ; laws. You may not combine this software with "viral" o
                        pen-source
    13 00000000         ; software in order to form a larger program.
-   14 00000000         ; 
+   14 00000000         ;
    15 00000000         ; THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
                        
    16 00000000         ; NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, 
@@ -36,13 +36,13 @@ ARM Macro Assembler    Page 1
    19 00000000         ; CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR C
                        ONSEQUENTIAL
    20 00000000         ; DAMAGES, FOR ANY REASON WHATSOEVER.
-   21 00000000         ; 
+   21 00000000         ;
    22 00000000         ; This is part of revision 9453 of the EK-LM4F120XL Firm
                        ware Package.
    23 00000000         ;
    24 00000000         ;*******************************************************
                        ***********************
-   25 00000000         ; Edited to conform with ISR names as described in 
+   25 00000000         ; Edited to conform with ISR names as described in
    26 00000000         ;   "Embedded Systems: Introduction to ARM Cortex M Micr
                        ocontrollers",
    27 00000000         ;   ISBN: 978-1469998749, Jonathan Valvano, copyright (c
@@ -1004,7 +1004,7 @@ ARM Macro Assembler    Page 16
   604 00000002 4770            BX               LR
   605 00000004         
   606 00000004         ;*********** EnableInterrupts ***************
-  607 00000004         ; enable interrupts
+  607 00000004         ; disable interrupts
   608 00000004         ; inputs:  none
   609 00000004         ; outputs: none
   610 00000004         EnableInterrupts
