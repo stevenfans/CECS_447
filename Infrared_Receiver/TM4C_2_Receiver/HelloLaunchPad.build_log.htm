@@ -10,17 +10,18 @@ Project File Date:  12/04/2019
 Rebuild target 'HelloLaunchPad'
 assembling startup.s...
 compiling lab2_graphics.c...
+lab2_graphics.c(11): warning:  #1295-D: Deprecated declaration Timer0_Init - give arg types
+  void Timer0_Init();
+lab2_graphics.c(12): warning:  #1295-D: Deprecated declaration PortC_Init - give arg types
+  void PortC_Init();
+lab2_graphics.c: 2 warnings, 0 errors
 compiling PLL.c...
 compiling ST7735.c...
 compiling walking.c...
 linking...
-Program Size: Code=3332 RO-data=2052 RW-data=44 ZI-data=1124  
-".\HelloLaunchPad.axf" - 0 Error(s), 0 Warning(s).
+Program Size: Code=3628 RO-data=2052 RW-data=52 ZI-data=5124  
+".\HelloLaunchPad.axf" - 0 Error(s), 2 Warning(s).
 Load "C:\\Users\\Rosswell\\Documents\\Tone-Generator\\Infrared_Receiver\\TM4C_2_Receiver\\HelloLaunchPad.axf" 
 Connecting: Mode=JTAG, Speed=1000000Hz
-Erase Done.
-Programming Done.
-Verify OK.
-</pre>
-</body>
-</html>
+Unable to initialize device!, error code=1
+Error: Flash Download failed  -  Target DLL has been cancelled
