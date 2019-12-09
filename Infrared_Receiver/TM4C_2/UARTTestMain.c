@@ -4,6 +4,8 @@
 #include "SysTick.h"
 #include "tm4c123gh6pm.h"
 #include "IR_Demod.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 #define SIGNAL       				(*((volatile unsigned long *)0x40004030))
 #define LIGHT 							(*((volatile unsigned long *)0x40025038))
@@ -22,23 +24,28 @@
 int state = 0 ; 
 
 int running = 0; 
-int startPulseDetected =0x00; 
-unsigned int tally_1 = 0; // hold the count for every time there is a 1 
-unsigned int tally_0 = 0; // hold the count for every time there is a 0
+int startPulseDetected =0; 
+int tally_1 = 0; // hold the count for every time there is a 1 
+int tally_0 = 0; // hold the count for every time there is a 0
 int  packet[5]; // array to hold 1 or 0
 unsigned long packet_element = 0; 
 unsigned long loop_0,loop_1=0; 
 int testingFlag = 0; 
 int firstTime = 0; 
+int packetArray[1050]; 
+int arrayFull = 0; 
+int packet_array_element; 
 
 
 void PORTF_Init(void);
 void Timer0_Init(); 
 
-void checkStartPulse(); 
+int checkStartPulse(); 
 void check1(); 
 void check0(); 
-
+void masterReset();
+void readPacket(); 
+void decodePacket(); 
 
 //---------------------OutCRLF---------------------
 // Output a CR,LF to UART to go to a new line
@@ -47,6 +54,15 @@ void check0();
 void OutCRLF(void){
   UART_OutChar(CR);
   UART_OutChar(LF);
+}
+
+void masterReset(){
+	tally_0=0; 
+	tally_1=0; 
+	running = 0; 
+	startPulseDetected=0;
+	packet_element=0; 
+	firstTime=0; 
 }
 
 int main(void){
@@ -69,38 +85,35 @@ int main(void){
 	state = WAIT_FOR_START; 
 	//GPIO_PORTF_DATA_R = 0x04; 
 	UART_OutChar('a'); 
+	OutCRLF(); 
   while(1){
 		//UART_OutUDec(state); 
 
-		UART_OutUDec(running); UART_OutUDec(startPulseDetected);  OutCRLF(); 
-		UART_OutString("Signal 0 Count: "); UART_OutUDec(tally_0);
-		UART_OutString("    Signal 1 Count: "); UART_OutUDec(tally_1);
-		OutCRLF(); 
-	if(testingFlag ==1) {UART_OutString("TESTING HERE:");UART_OutUDec(packet_element); 
-		OutCRLF(); }
+//		UART_OutUDec(running); UART_OutUDec(startPulseDetected);UART_OutUDec(firstTime); 
+//		;UART_OutUDec(packet_element);OutCRLF(); 
+//		UART_OutString("Signal 0 Count: "); UART_OutUDec(tally_0);
+//		UART_OutString("    Signal 1 Count: "); UART_OutUDec(tally_1);
+//		OutCRLF(); 
+//	if(testingFlag ==1) {UART_OutString("TESTING HERE:");UART_OutUDec(packet_element); 
+//		OutCRLF(); }
 //		UART_OutString("loop0: "); UART_OutUDec(loop_0);
 //		UART_OutString("    loop1: "); UART_OutUDec(loop_1);
 //		OutCRLF(); 
-		UART_OutString("Packet Array: ");
-		for(k=0; k<5;k++){
-			UART_OutUDec(packet[k]);
-		}
-		OutCRLF(); 
 		
-		switch(state){
-			case 0: if (running==1) checkStartPulse(); UART_OutString("In state 0"); OutCRLF(); 
-							break; 
-			case 1: UART_OutString("In state2"); 
-							break; 
-			case 2: UART_OutString("State 3"); 
-							break ;
-			case 3: UART_OutString("State 4"); 
-							break ;
-			default: UART_OutString("Default State"); 
-							break; 
-		}
-		SysTick_Wait1us(999999);
-  }
+//		if(testingFlag){
+//		UART_OutString("Packet Array: "); OutCRLF(); 
+//		for(k=0; k<1050;k++){
+//			UART_OutUDec(k); UART_OutString("   "); 
+//			UART_OutUDec(packet[k]); OutCRLF(); 
+//		}
+//		testingFlag=0; 
+//	}
+		//OutCRLF(); 
+		//if(packet_element>=5){packet_element=0;firstTime=0;}
+//	if(packet_element==4) firstTime=0;
+//		SysTick_Wait1us(1000000);
+	}
+		
 }
 
 void PORTF_Init(void){      
@@ -139,52 +152,67 @@ void GPIOPortA_Handler(void){
 		if (running==0&&firstTime==0){
 			running = 1; 
 			firstTime=1; 
+			packet_element=0; 
 		}
 	}
 }
 
-void checkStartPulse(){
+int checkStartPulse(){
 	//determine if its there is an accurate start pulse
-	if(90<tally_0 && tally_0<120 &&
-		  70<tally_1 && tally_1<120){
-				tally_0 = 0; 
-				tally_1 = 0; 
-				UART_OutString("FUCK ME"); 
-				state = FIRST;
-				running = 0; 
-				startPulseDetected = 1; 
-			}
-}
+	if(packetArray[100] ==0){ // check to see if the signal was low 
+		return 1; 							// start signal should be low at this point 
+	}
+	else return 0; 
+ }
+
+ void decodePacket(){
+	 int count=267; 
+	 unsigned int k; 
+	 //skip the start pulse 
+	 for(k=0;k<5;k++){
+		 if(packetArray[count]==0){//logic 1
+			 packet[k]=1;
+			 count += 135;
+			 //UART_OutString("*********   1    ********");
+		 }
+		 else{//logic 0
+			 packet[k]=0; 
+			 count+=88;
+			 //UART_OutString("***********  0    **********");
+
+		 }
+	 }
+	 startPulseDetected=0; 
+ }
 
 void check1(){
-	if(90<tally_0 && tally_0<100 &&
-		  40<tally_1 && tally_1<60){
-				running=0; 
-				startPulseDetected=1; 
+//	if(90<tally_0 && tally_0<105 &&
+//		  45<tally_1 && tally_1<65){
+	if(abs(tally_1-tally_0)>5){
 				tally_0 = 0; 
 				tally_1 = 0; 
 				packet[packet_element]=1; 
-				state = SECOND;
 				packet_element++;
-				testingFlag=1; 
 			}
 }
 
 void check0(){
-	if(35<tally_0 && tally_0<60 &&
-		 35<tally_1 && tally_1<100){
-				running=0; 
-				//startPulseDetected=1; 
-				tally_0 = 0; 
-				tally_1 = 0; 
+//	if(40<tally_0 && tally_0<55 &&
+//		 40<tally_1 && tally_1<55){
+	if(abs(tally_1-tally_0)<5){
+				tally_0 = 0; tally_1 = 0; 
 				packet[packet_element]=9;
-				state = THIRD;
 				packet_element++;
-				testingFlag=1; 
 			}
 }
 
+
 void SysTick_Handler(){
+}
+
+void readPacket(){
+	unsigned int count;
+	checkStartPulse(); 
 }
 
 void Timer0_Init(){//10 us
@@ -204,129 +232,24 @@ void Timer0_Init(){//10 us
 
 void Timer0A_Handler(){//called every 100 us
 	 TIMER0_ICR_R = 0x00000001; //acknowledge timer0A flag
-	
-	 //GPIO_PORTF_DATA_R ^= RED;
-	if(packet_element>=5) startPulseDetected=0; //packet_element=0; 
-	if(tally_1>=150)tally_1=0; 
-	
-	
-	if (running){
-		if (SIGNAL==0) tally_0++; 
-		else tally_1++; 
-	}
-	
-	
-	checkStartPulse(); 
 
-	if (startPulseDetected){
-		
-		check0(); check1(); 
-		if (SIGNAL==0) tally_0++; 
-		else tally_1++; 
+	if(running){
+		if (SIGNAL==0) packetArray[packet_array_element]=0;  
+		else packetArray[packet_array_element]=1;  	
+		packet_array_element++;
 	}
-	 check0();check1(); 
+	if(packet_array_element==1050){
+		running = 0;
+		packet_array_element=0; 
+		testingFlag = 1; 
+		arrayFull=1; 
+		startPulseDetected = checkStartPulse(); 
+	}
 	
+	if(startPulseDetected==1){
+		decodePacket(); 
+	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-//	if(150<tally_0 || 150<tally_1){
-//		tally_0 = 0; 
-//		tally_1 = 0; 
-//		running = 0; 
-//	}
-//	
-//	if(running==1){ //recieved a modulated signal 
-//		
-//		//tally the counter to determine if its a start/logic 1/logic 0
-//		GPIO_PORTF_DATA_R ^= 0x08;
-//		if (SIGNAL==0) tally_0++; 
-//		else tally_1++; 
-//		//-------------------------------------------------------
-//		if (startPulseDetected==1){ // when there is a legit signal
-//			//update the counters
-//			if (SIGNAL==0) tally_0++; 
-//			else tally_1++; 
-//			
-//			//check if its a 0
-//			if(40<tally_0 && tally_0<70 && 
-//				 40<tally_1 && tally_1<70){
-//					 // add 0 to the array
-//					 packet[packet_element] = 0; 
-//					 tally_0 = 0; 
-//					 tally_1 = 0; 
-//					 testingFlag = 1; 
-//					 //running  = 0;
-//					 loop_0++; 
-//					 packet_element++;
-//				 }
-//		//check if its a 1
-////		if(85<tally_0 && tally_0<100 &&
-////			 40<tally_1 && tally_1<100){
-////				 //do something here
-////				 packet[packet_element] = 1; 
-////				 tally_0 = 0; 
-////				 tally_1 = 1; 
-////				 //running  = 0;
-////				 loop_1++; 
-////				 packet_element++; 
-////			 }
-//		//packet_element++; //update the element index
-//		 }
-//	}
-////	}
-//	
-//	//determine if its there is an accurate start pulse
-//	if(90<tally_0 && tally_0<120 &&
-//		  80<tally_1 && tally_1<500 &&
-//		 running){	
-//				startPulseDetected = 1; 
-//				tally_0 = 0; 
-//				tally_1 = 0; 
-//				//running = 0; //reset the signal flag
-//			}
+	  
 }
 
