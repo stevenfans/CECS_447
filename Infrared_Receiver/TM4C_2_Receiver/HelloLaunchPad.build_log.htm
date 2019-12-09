@@ -10,27 +10,22 @@ Project File Date:  12/09/2019
 Rebuild target 'HelloLaunchPad'
 assembling startup.s...
 compiling lab2_graphics.c...
-walking.h(10): warning:  #1-D: last line of file ends without a newline
-  void clear_animation(void);
+lab2_graphics.c(222): warning:  #177-D: variable "k" was declared but never referenced
+        int k = 0;
 lab2_graphics.c: 1 warning, 0 errors
 compiling PLL.c...
 compiling ST7735.c...
 compiling walking.c...
-walking.h(10): warning:  #1-D: last line of file ends without a newline
-  void clear_animation(void);
-walking.c(212): warning:  #1-D: last line of file ends without a newline
-  }
-walking.c: 2 warnings, 0 errors
 compiling SysTick.c...
 compiling waveforms.c...
+compiling IR_Demod.c...
+IR_Demod.c(34): warning:  #550-D: variable "delay" was set but never used
+        unsigned long delay; 
+IR_Demod.c: 1 warning, 0 errors
+compiling UART.c...
 linking...
-Program Size: Code=4916 RO-data=3076 RW-data=96 ZI-data=1120  
-".\HelloLaunchPad.axf" - 0 Error(s), 3 Warning(s).
-Load "C:\\Users\\Rosswell\\Documents\\Tone-Generator\\Infrared_Receiver\\TM4C_2_Receiver\\HelloLaunchPad.axf" 
-Connecting: Mode=JTAG, Speed=1000000Hz
-Erase Done.
-Programming Done.
-Verify OK.
+Program Size: Code=3760 RO-data=1056 RW-data=48 ZI-data=5344  
+".\HelloLaunchPad.axf" - 0 Error(s), 2 Warning(s).
 Load "C:\\Users\\Rosswell\\Documents\\Tone-Generator\\Infrared_Receiver\\TM4C_2_Receiver\\HelloLaunchPad.axf" 
 Connecting: Mode=JTAG, Speed=1000000Hz
 Erase Done.
@@ -39,3 +34,12 @@ Verify OK.
 </pre>
 </body>
 </html>
+ used
+        unsigned long delay; 
+IR_Demod.c: 2 warnings, 0 errors
+compiling UART.c...
+UART.c(348): warning:  #1-D: last line of file ends without a newline
+  }
+UART.c: 1 warning, 0 errors
+".\HelloLaunchPad.axf" - 1 Error(s), 6 Warning(s).
+Target not created

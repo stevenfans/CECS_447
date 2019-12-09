@@ -9,3 +9,5 @@
 .\lab2_graphics.o: walking.h
 .\lab2_graphics.o: C:\Keil\ARM\ARMCC\bin\..\include\stdlib.h
 .\lab2_graphics.o: tm4c123gh6pm.h
+.\lab2_graphics.o: IR_Demod.h
+.\lab2_graphics.o: UART.h

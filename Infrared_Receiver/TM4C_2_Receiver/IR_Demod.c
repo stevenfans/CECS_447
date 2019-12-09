@@ -10,7 +10,7 @@
 #define SIGNAL       				(*((volatile unsigned long *)0x40004030))
 
 void Init_PortA(void){ 
-	unsigned long delay; 
+	unsigned long volatile delay; 
 	SYSCTL_RCGC2_R |= 0x00000001; 
 	delay = SYSCTL_RCGC2_R; 
 	GPIO_PORTA_DATA_R |= 0x04; 				//use PA2
@@ -47,7 +47,7 @@ void Init_PortE(void){
 	GPIO_PORTE_IEV_R &= ~0x04;
 	GPIO_PORTE_ICR_R = 0x04;
 	GPIO_PORTE_IM_R |= 0x04;
-	NVIC_PRI1_R = (NVIC_PRI0_R&0xFFFFFF0F) | 0x000000E0;
+	NVIC_PRI1_R = (NVIC_PRI1_R&0xFFFFFF0F) | 0x000000E0;
 	NVIC_EN0_R |= 0x00000010;
 }
 

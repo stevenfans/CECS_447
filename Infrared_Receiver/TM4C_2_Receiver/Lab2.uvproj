@@ -440,6 +440,16 @@
               <FileType>1</FileType>
               <FilePath>.\waveforms.c</FilePath>
             </File>
+            <File>
+              <FileName>IR_Demod.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\IR_Demod.c</FilePath>
+            </File>
+            <File>
+              <FileName>UART.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\UART.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

@@ -431,14 +431,14 @@
               <FilePath>.\walking.c</FilePath>
             </File>
             <File>
-              <FileName>Tone.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Tone.c</FilePath>
-            </File>
-            <File>
               <FileName>SysTick.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\SysTick.c</FilePath>
+            </File>
+            <File>
+              <FileName>waveforms.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\waveforms.c</FilePath>
             </File>
           </Files>
         </Group>

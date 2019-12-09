@@ -5,5 +5,5 @@
 .\uarttestmain.o: SysTick.h
 .\uarttestmain.o: ..\tm4c123gh6pm.h
 .\uarttestmain.o: IR_Demod.h
-.\uarttestmain.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
-.\uarttestmain.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+.\uarttestmain.o: C:\Keil\ARM\ARMCC\bin\..\include\stdio.h
+.\uarttestmain.o: C:\Keil\ARM\ARMCC\bin\..\include\stdlib.h

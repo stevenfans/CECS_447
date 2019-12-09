@@ -451,6 +451,11 @@
               <FileType>1</FileType>
               <FilePath>.\SysTick.c</FilePath>
             </File>
+            <File>
+              <FileName>IR_Demod.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\IR_Demod.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

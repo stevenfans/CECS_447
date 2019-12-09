@@ -63,21 +63,21 @@ void SysTick_Wait10ms(uint32_t delay){
 }
 
 unsigned long frequency_count = 0;
-extern int command[5];
+extern int packet[5];
 void SysTick_Handler(){
 	frequency_count++;
 	
-	if (command[0]==0 && command[1]==0 && command[2]== 1 && command[3]==0 && command[4] == 0){
+	if (packet[0]==0 && packet[1]==0 && packet[2]== 1 && packet[3]==0 && packet[4] == 0){
 		sineWave(frequency_count);
 	}
-	else if (command[0]==0 && command[1]==0 && command[2]== 1 && command[3]==0 && command[4] == 1){
+	else if (packet[0]==0 && packet[1]==0 && packet[2]== 1 && packet[3]==0 && packet[4] == 1){
 		
 		squareWave(frequency_count);
 	}
-	else if (command[0]==0 && command[1]==0 && command[2]== 1 && command[3]==1 && command[4] == 0){
+	else if (packet[0]==0 && packet[1]==0 && packet[2]== 1 && packet[3]==1 && packet[4] == 0){
 		triangleWave(frequency_count);
 	}
-	else if (command[0]==0 && command[1]==0 && command[2]== 1 && command[3]==1 && command[4] == 1){
+	else if (packet[0]==0 && packet[1]==0 && packet[2]== 1 && packet[3]==1 && packet[4] == 1){
 		sawtoothWave(frequency_count);
 	}
 	else{

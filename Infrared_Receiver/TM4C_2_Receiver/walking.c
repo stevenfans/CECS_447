@@ -210,3 +210,5 @@ void face_animation(void){
 void clear_animation(void){	
 	ST7735_FillScreen(ST7735_BLACK);
 }
+
+

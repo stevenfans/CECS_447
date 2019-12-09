@@ -8,3 +8,4 @@ void waving_animation(void);
 void car_animation(void);
 void face_animation(void);
 void clear_animation(void);
+
