@@ -14,19 +14,8 @@
 #define GREEN   0x08; 
 #define WHITE   0x0E; 
 
-// states
-#define WAIT_FOR_START 		0;
-#define FIRST 	1; 
-#define SECOND 	2; 
-#define THIRD 	3; 
-#define FOURTH 	4; 
-#define FIFTH 	5; 
-int state = 0 ; 
-
 int running = 0; 
 int startPulseDetected =0; 
-int tally_1 = 0; // hold the count for every time there is a 1 
-int tally_0 = 0; // hold the count for every time there is a 0
 int  packet[5]; // array to hold 1 or 0
 unsigned long packet_element = 0; 
 unsigned long loop_0,loop_1=0; 
@@ -35,17 +24,17 @@ int firstTime = 0;
 int packetArray[1050]; 
 int arrayFull = 0; 
 int packet_array_element; 
-
+int done=0; 
 
 void PORTF_Init(void);
-void Timer0_Init(); 
+void Timer0_Init(void); 
 
-int checkStartPulse(); 
-void check1(); 
-void check0(); 
-void masterReset();
-void readPacket(); 
-void decodePacket(); 
+int checkStartPulse(void); 
+//void check1(); 
+//void check0(); 
+//void masterReset();
+//void readPacket(); 
+void decodePacket(void); 
 
 //---------------------OutCRLF---------------------
 // Output a CR,LF to UART to go to a new line
@@ -56,20 +45,12 @@ void OutCRLF(void){
   UART_OutChar(LF);
 }
 
-void masterReset(){
-	tally_0=0; 
-	tally_1=0; 
-	running = 0; 
-	startPulseDetected=0;
-	packet_element=0; 
-	firstTime=0; 
-}
 
 int main(void){
 	unsigned long frequency = 262;
 	unsigned long last_frequency = 262;
 	unsigned long freq_value;  
-	char string [10]; 
+	//char string [10]; 
 	unsigned int k ; 
 	
 	PLL_Init();
@@ -81,39 +62,20 @@ int main(void){
 	PORTF_Init();
 	SysTick_Init(800); 
 	Timer0_Init();
-	
-	state = WAIT_FOR_START; 
-	//GPIO_PORTF_DATA_R = 0x04; 
+ 
 	UART_OutChar('a'); 
 	OutCRLF(); 
   while(1){
-		//UART_OutUDec(state); 
+		//UART_OutUDec(done); 
+		if(done){
+			for(k=0; k<5;k++){
+				UART_OutUDec(packet[k]);
+			}
+			OutCRLF(); 
+			done=0; 
+			}
 
-//		UART_OutUDec(running); UART_OutUDec(startPulseDetected);UART_OutUDec(firstTime); 
-//		;UART_OutUDec(packet_element);OutCRLF(); 
-//		UART_OutString("Signal 0 Count: "); UART_OutUDec(tally_0);
-//		UART_OutString("    Signal 1 Count: "); UART_OutUDec(tally_1);
-//		OutCRLF(); 
-//	if(testingFlag ==1) {UART_OutString("TESTING HERE:");UART_OutUDec(packet_element); 
-//		OutCRLF(); }
-//		UART_OutString("loop0: "); UART_OutUDec(loop_0);
-//		UART_OutString("    loop1: "); UART_OutUDec(loop_1);
-//		OutCRLF(); 
-		
-//		if(testingFlag){
-//		UART_OutString("Packet Array: "); OutCRLF(); 
-//		for(k=0; k<1050;k++){
-//			UART_OutUDec(k); UART_OutString("   "); 
-//			UART_OutUDec(packet[k]); OutCRLF(); 
-//		}
-//		testingFlag=0; 
-//	}
-		//OutCRLF(); 
-		//if(packet_element>=5){packet_element=0;firstTime=0;}
-//	if(packet_element==4) firstTime=0;
-//		SysTick_Wait1us(1000000);
 	}
-		
 }
 
 void PORTF_Init(void){      
@@ -160,9 +122,13 @@ void GPIOPortA_Handler(void){
 int checkStartPulse(){
 	//determine if its there is an accurate start pulse
 	if(packetArray[100] ==0){ // check to see if the signal was low 
+		UART_OutString("Start Pulse Detected"); OutCRLF(); 
 		return 1; 							// start signal should be low at this point 
 	}
-	else return 0; 
+	else {
+		UART_OutString("Start Pulse NOT Detected");
+		return 0; 
+	}
  }
 
  void decodePacket(){
@@ -183,36 +149,14 @@ int checkStartPulse(){
 		 }
 	 }
 	 startPulseDetected=0; 
+	 done = 1;
+	 firstTime=0; 
+	 UART_OutString("DONE FLAG: "); UART_OutUDec(done); OutCRLF(); 
  }
 
-void check1(){
-//	if(90<tally_0 && tally_0<105 &&
-//		  45<tally_1 && tally_1<65){
-	if(abs(tally_1-tally_0)>5){
-				tally_0 = 0; 
-				tally_1 = 0; 
-				packet[packet_element]=1; 
-				packet_element++;
-			}
-}
-
-void check0(){
-//	if(40<tally_0 && tally_0<55 &&
-//		 40<tally_1 && tally_1<55){
-	if(abs(tally_1-tally_0)<5){
-				tally_0 = 0; tally_1 = 0; 
-				packet[packet_element]=9;
-				packet_element++;
-			}
-}
 
 
 void SysTick_Handler(){
-}
-
-void readPacket(){
-	unsigned int count;
-	checkStartPulse(); 
 }
 
 void Timer0_Init(){//10 us
@@ -246,7 +190,7 @@ void Timer0A_Handler(){//called every 100 us
 		startPulseDetected = checkStartPulse(); 
 	}
 	
-	if(startPulseDetected==1){
+	if(startPulseDetected){
 		decodePacket(); 
 	}
 	
