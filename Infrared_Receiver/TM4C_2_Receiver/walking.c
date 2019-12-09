@@ -212,3 +212,144 @@ void clear_animation(void){
 }
 
 
+
+void walking_backwards_animation(void){
+	
+	if (!is_setup){
+		
+		// DRAW THE GROUND
+		ST7735_FillScreen(ST7735_CYAN);
+		ST7735_FillRect(0, 150,128, 30, ST7735_GREEN);
+			
+		// DRAW THE SUN
+		ST7735_FillCircle(100, 30, 15,ST7735_YELLOW);
+		is_setup = 1;
+	}
+	
+	// DRAW THE MAN
+	ST7735_XYPlotMan( x, l, h, ST7735_RED);
+	
+  DelayWait10ms(10);
+		
+	// REMOVE THE MAN
+	ST7735_XYPlotMan( x, l, h, ST7735_CYAN);
+ 
+	// MOVE THE COORDINATES OF THE MAN
+	x--;
+ 
+	// CODE for MOVING the LEG
+	l--;
+	if (l == -15)
+	    l = 15;
+ 
+	// CODE for MOVING the HAND    
+	if (ht == 1)
+	    h++;
+	else
+	    h--;
+ 
+	if (h == 15)
+	   ht = 0;
+	else if (h == -15)   
+		ht = 1;
+ 
+	//Reset parameters
+	  if(x>170){
+			x = 40, ht = 0,l = 15, h = 15;
+    }
+}
+
+
+
+void running_backwards_animation(void){
+	
+	if (!is_setup){
+		
+		// DRAW THE GROUND
+		ST7735_FillScreen(ST7735_CYAN);
+		ST7735_FillRect(0, 150,128, 30, ST7735_GREEN);
+			
+		// DRAW THE SUN
+		ST7735_FillCircle(100, 30, 15,ST7735_YELLOW);
+		is_setup = 1;
+	}
+	
+	// DRAW THE MAN
+	ST7735_XYPlotMan( x, l, h, ST7735_RED);
+	
+  DelayWait10ms(3);
+		
+	// REMOVE THE MAN
+	ST7735_XYPlotMan( x, l, h, ST7735_CYAN);
+ 
+	// MOVE THE COORDINATES OF THE MAN
+	x--;
+ 
+	// CODE for MOVING the LEG
+	l--;
+	if (l == -15)
+	    l = 15;
+ 
+	// CODE for MOVING the HAND    
+	if (ht == 1)
+	    h++;
+	else
+	    h--;
+ 
+	if (h == 15)
+	   ht = 0;
+	else if (h == -15)   
+		ht = 1;
+ 
+	//Reset parameters
+	  if(x>170){
+			x = 40, ht = 0,l = 15, h = 15;
+    }
+}
+
+
+void running_animation(void){
+	
+	if (!is_setup){
+		
+		// DRAW THE GROUND
+		ST7735_FillScreen(ST7735_CYAN);
+		ST7735_FillRect(0, 150,128, 30, ST7735_GREEN);
+			
+		// DRAW THE SUN
+		ST7735_FillCircle(100, 30, 15,ST7735_YELLOW);
+		is_setup = 1;
+	}
+	
+	// DRAW THE MAN
+	ST7735_XYPlotMan( x, l, h, ST7735_RED);
+	
+  DelayWait10ms(3);
+		
+	// REMOVE THE MAN
+	ST7735_XYPlotMan( x, l, h, ST7735_CYAN);
+ 
+	// MOVE THE COORDINATES OF THE MAN
+	x++;
+ 
+	// CODE for MOVING the LEG
+	l--;
+	if (l == -15)
+	    l = 15;
+ 
+	// CODE for MOVING the HAND    
+	if (ht == 1)
+	    h++;
+	else
+	    h--;
+ 
+	if (h == 15)
+	   ht = 0;
+	else if (h == -15)   
+		ht = 1;
+ 
+	//Reset parameters
+	  if(x>170){
+			x = 40, ht = 0,l = 15, h = 15;
+    }
+}

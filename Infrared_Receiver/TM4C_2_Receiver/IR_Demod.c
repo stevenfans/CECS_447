@@ -31,7 +31,7 @@ void Init_PortA(void){
 }
 
 void Init_PortE(void){ 
-	unsigned long delay; 
+	unsigned long volatile delay; 
 	SYSCTL_RCGC2_R |= 0x00000010; 
 	delay = SYSCTL_RCGC2_R; 
 	GPIO_PORTE_DATA_R |= 0x04; 				//use PA2

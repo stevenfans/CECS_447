@@ -10,6 +10,7 @@
 #include "IR_Demod.h"
 #include "UART.h"
 #include "math.h"
+\
 
 #define SIGNAL       				(*((volatile unsigned long *)0x40024030))
 #define LIGHT 							(*((volatile unsigned long *)0x40025038))
@@ -19,12 +20,10 @@
 #define WHITE   0x0E; 
 
 int frequency = 262;
-//int command[5] = {0,0,0,1,0};
-
 int running = 0; 
 int startPulseDetected =0; 
-int  packet[5]; // array to hold 1 or 0
-//int  packet[5] = {0,0,1,0,0};
+int  packet[5] = {-1,-1,-1,-1,-1}; // array to hold 1 or 0
+int new_packet = 0;
 unsigned long packet_element = 0; 
 unsigned long loop_0,loop_1=0; 
 int testingFlag = 0; 
@@ -33,7 +32,7 @@ int packetArray[1050];
 int arrayFull = 0; 
 int packet_array_element; 
 int done=0; 
-int device_number = 0; //default device 0
+int current_device_number = 0; //default device 0
 
 void PORTF_Init(void);
 void Timer0_Init(void); 
@@ -53,7 +52,7 @@ void OutCRLF(void){
 
 int main(void){
 	unsigned int k ;
-	unsigned int decimal; 
+	unsigned int input_device_number; 
 	
 	PLL_Init(4);
 	SysTick_Init(80000000/256/frequency); // Clk / sine wave steps / desired frequency
@@ -63,18 +62,17 @@ int main(void){
 	//Init_PortA(); 
 	Init_PortE(); 
 	PORTF_Init();
-  //ST7735_InitR(INITR_REDTAB);
+  ST7735_InitR(INITR_REDTAB);
 	Timer0_Init();
 	
 	UART_OutChar('a'); 
 	OutCRLF(); 
-	//SIGNAL = RED; // default device 1
+	LIGHT = RED; // default device 1
 	
   while(1){		
-		
 		if(done){
-		decimal = addressBinToDecimal(packet); 
-		UART_OutString("Address to decimal: "); UART_OutUDec(decimal); OutCRLF(); 
+		input_device_number = addressBinToDecimal(packet); 
+		UART_OutString("Address to decimal: "); UART_OutUDec(input_device_number); OutCRLF(); 
 			for(k=0; k<5;k++){
 				UART_OutUDec(packet[k]);
 			}
@@ -92,26 +90,29 @@ int main(void){
 		// sky blue -GB    0x0C	
 		// white    RGB    0x0E
 		// pink     R-B    0x06
-		if (packet[0]==0 && packet[1]==0 && packet[2]== 0 && packet[3]==0 && packet[4] == 0){
-			//walking_animation();
-			GPIO_PORTF_DATA_R = 0x0A;
-		}
-		else if (packet[0]==0 && packet[1]==0 && packet[2]== 0 && packet[3]==0 && packet[4] == 1){
-			//waving_animation();		
-			GPIO_PORTF_DATA_R = 0x0E; //white
+		
+		if(input_device_number==current_device_number){
+			if (packet[0]==0 && packet[1]==0 && packet[2]== 0 && packet[3]==0 && packet[4] == 0){
+				walking_animation();
+				//GPIO_PORTF_DATA_R = 0x0A;
 			}
-		else if (packet[0]==0 && packet[1]==0 && packet[2]== 0 && packet[3]==1 && packet[4] == 0){
-			//car_animation();
-			GPIO_PORTF_DATA_R = 0x06; //pink
-		}
-		else if (packet[0]==0 && packet[1]==0 && packet[2]== 0 && packet[3]==1 && packet[4] == 1){
-			GPIO_PORTF_DATA_R = 0x0C; // skyblue
-			//face_animation();
-		}
-		else{
-			GPIO_PORTF_DATA_R = 0x00;
-			//clear_animation();
-		}
+			else if (packet[0]==0 && packet[1]==0 && packet[2]== 0 && packet[3]==0 && packet[4] == 1){
+				walking_backwards_animation();
+				//GPIO_PORTF_DATA_R = 0x0E; //white
+				}
+			else if (packet[0]==0 && packet[1]==0 && packet[2]== 0 && packet[3]==1 && packet[4] == 0){
+				running_animation();
+				//GPIO_PORTF_DATA_R = 0x06; //pink
+			}
+			else if (packet[0]==0 && packet[1]==0 && packet[2]== 0 && packet[3]==1 && packet[4] == 1){
+				//GPIO_PORTF_DATA_R = 0x0C; // skyblue
+				running_backwards_animation();
+			}
+			else{
+				//GPIO_PORTF_DATA_R = 0x00;
+				clear_animation();
+				}
+			}
 	}
 }
 
@@ -162,21 +163,21 @@ void PORTF_Init(void){
 }
 
 void GPIOPortF_Handler(void){
-//	if ((GPIO_PORTF_RIS_R & 0x10)){ // sw1 is pressed
-//		GPIO_PORTF_ICR_R = 0x10;
-//		if (LIGHT==0x08) {
-//			LIGHT = WHITE;
-//			device_number = 3; 
-//		}
-//		else if (LIGHT==0x0E){
-//			LIGHT=RED;
-//			device_number = 0; 
-//		}
-//		else  {
-//			LIGHT = LIGHT << 1; 
-//			device_number +=1; 
-//		}
-//	}
+	if ((GPIO_PORTF_RIS_R & 0x10)){ // sw1 is pressed
+		GPIO_PORTF_ICR_R = 0x10;
+		if (LIGHT==0x08) {
+			LIGHT = WHITE;
+			current_device_number = 3; 
+		}
+		else if (LIGHT==0x0E){
+			LIGHT=RED;
+			current_device_number = 0; 
+		}
+		else  {
+			LIGHT = LIGHT << 1; 
+			current_device_number +=1; 
+		}
+	}
 }
 
 
@@ -230,6 +231,7 @@ int checkStartPulse(){
 	 done = 1;
 	 firstTime=0; 
 	 UART_OutString("DONE FLAG: "); UART_OutUDec(done); OutCRLF(); 
+	 new_packet = 1;
 //	 	for(k=0; k<1050;k++){
 //				UART_OutUDec(packetArray[k]);
 //			}
@@ -253,7 +255,6 @@ void Timer0_Init(){//10 us
 }
 
 void Timer0A_Handler(){//called every 100 us
-	int k = 0;
 	 TIMER0_ICR_R = 0x00000001; //acknowledge timer0A flag
 
 	if(running){

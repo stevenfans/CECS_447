@@ -8,4 +8,12 @@ void waving_animation(void);
 void car_animation(void);
 void face_animation(void);
 void clear_animation(void);
+void reset_animation(void);
+
+
+
+void walking_backwards_animation(void);
+void running_backwards_animation(void);
+void running_animation(void);
+
 
