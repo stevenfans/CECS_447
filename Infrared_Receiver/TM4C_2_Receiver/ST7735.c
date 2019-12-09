@@ -56,37 +56,6 @@
 // VCC (pin 2) connected to +3.3 V
 // Gnd (pin 1) connected to ground
 
-// **********wide.hk ST7735R with ADXL345 accelerometer *******************
-// Silkscreen Label (SDC side up; LCD side down) - Connection
-// VCC  - +3.3 V
-// GND  - Ground
-// !SCL - PA2 Sclk SPI clock from microcontroller to TFT or SDC
-// !SDA - PA5 MOSI SPI data from microcontroller to TFT or SDC
-// DC   - PA6 TFT data/command
-// RES  - PA7 TFT reset
-// CS   - PA3 TFT_CS, active low to enable TFT
-// *CS  - (NC) SDC_CS, active low to enable SDC
-// MISO - (NC) MISO SPI data from SDC to microcontroller
-// SDA  – (NC) I2C data for ADXL345 accelerometer
-// SCL  – (NC) I2C clock for ADXL345 accelerometer
-// SDO  – (NC) I2C alternate address for ADXL345 accelerometer
-// Backlight + - Light, backlight connected to +3.3 V
-
-// **********wide.hk ST7735R with ADXL335 accelerometer *******************
-// Silkscreen Label (SDC side up; LCD side down) - Connection
-// VCC  - +3.3 V
-// GND  - Ground
-// !SCL - PA2 Sclk SPI clock from microcontroller to TFT or SDC
-// !SDA - PA5 MOSI SPI data from microcontroller to TFT or SDC
-// DC   - PA6 TFT data/command
-// RES  - PA7 TFT reset
-// CS   - PA3 TFT_CS, active low to enable TFT
-// *CS  - (NC) SDC_CS, active low to enable SDC
-// MISO - (NC) MISO SPI data from SDC to microcontroller
-// X– (NC) analog input X-axis from ADXL335 accelerometer
-// Y– (NC) analog input Y-axis from ADXL335 accelerometer
-// Z– (NC) analog input Z-axis from ADXL335 accelerometer
-// Backlight + - Light, backlight connected to +3.3 V
 
 #include <stdio.h>
 #include <stdint.h>
