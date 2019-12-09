@@ -103,6 +103,7 @@ void Timer0_Init(){//10 us   10 us/12.5ns = 800
 }
 
 void Timer0A_Handler(){//called every 10 us
+	GPIO_PORTF_DATA_R = 0x0A;
 	 TIMER0_ICR_R = 0x00000001; //acknowledge timer0A flag
 		// read PD0
 		counter[counter_position] = GPIO_PORTC_DATA_R&0x10; // read PD4 into In
