@@ -40,6 +40,7 @@ void Timer0_Init(void);
 
 int checkStartPulse(void); 
 void decodePacket(void); 
+int addressBinToDecimal(int *packet); 
 
 //---------------------OutCRLF---------------------
 // Output a CR,LF to UART to go to a new line
@@ -52,13 +53,14 @@ void OutCRLF(void){
 
 int main(void){
 	unsigned int k ;
+	unsigned int decimal; 
 	
 	PLL_Init(4);
 	SysTick_Init(80000000/256/frequency); // Clk / sine wave steps / desired frequency
 	Init_PortB();
 	UART_Init();
 	UART2_Init();
-	Init_PortA(); 
+	//Init_PortA(); 
 	Init_PortE(); 
 	PORTF_Init();
   //ST7735_InitR(INITR_REDTAB);
@@ -71,15 +73,15 @@ int main(void){
   while(1){		
 		
 		if(done){
+		decimal = addressBinToDecimal(packet); 
+		UART_OutString("Address to decimal: "); UART_OutUDec(decimal); OutCRLF(); 
 			for(k=0; k<5;k++){
 				UART_OutUDec(packet[k]);
 			}
 			OutCRLF(); 
 			done=0; 
 		}
-		
-		
-		
+	
 		
 		// Color    LED(s) PortF
 		// dark     ---    0
@@ -115,17 +117,23 @@ int main(void){
 
 //used to decode the address in binary to become an int
 int addressBinToDecimal(int *packet){
-	unsigned int place_value; 
-	int answer; 
-	
-	for(place_value=0; place_value<2; place_value++){
+	int place_value; 
+	int answer=0; 
+	int exponent=0; 
+  
+  for(place_value=1; place_value>=0; place_value--){
 		if(packet[place_value]==1){
-			answer += pow(1,(place_value++)); 
+			answer += (packet[place_value]*pow(2,exponent)); 
 		}
-		else answer+=pow(0,(place_value++));
-	}
+		else { 
+			answer+= (packet[place_value]*pow(2,exponent)); 
+    }
+		exponent++;
+  }
 	return answer; 
 }
+
+
 void PORTF_Init(void){      
   SYSCTL_RCGC2_R |= 0x00000020;     // 1) F clock
   GPIO_PORTF_LOCK_R = 0x4C4F434B;   // 2) unlock PortF PF0  
@@ -171,18 +179,6 @@ void GPIOPortF_Handler(void){
 //	}
 }
 
-// interrupt checks to see the start of the decoding
-void GPIOPortA_Handler(void){
-	if (GPIO_PORTA_RIS_R & 0x04){ // sw1 is pressed
-		GPIO_PORTA_ICR_R = 0x04; // clear flag
-		GPIO_PORTF_DATA_R = 0x08; 
-		if (running==0&&firstTime==0){
-			running = 1; 
-			firstTime=1; 
-			packet_element=0; 
-		}
-	}
-}
 
 // interrupt checks to see the start of the decoding
 void GPIOPortE_Handler(void){
@@ -206,6 +202,9 @@ int checkStartPulse(){
 	}
 	else {
 		UART_OutString("Start Pulse NOT Detected");
+			 startPulseDetected=0; 
+	 done = 1;
+	 firstTime=0; 
 		return 0; 
 	}
  }
@@ -231,10 +230,10 @@ int checkStartPulse(){
 	 done = 1;
 	 firstTime=0; 
 	 UART_OutString("DONE FLAG: "); UART_OutUDec(done); OutCRLF(); 
-	 	for(k=0; k<1050;k++){
-				UART_OutUDec(packetArray[k]);
-			}
-			OutCRLF(); 
+//	 	for(k=0; k<1050;k++){
+//				UART_OutUDec(packetArray[k]);
+//			}
+//			OutCRLF(); 
  }
 
 
