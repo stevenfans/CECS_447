@@ -9,8 +9,9 @@
 #include "tm4c123gh6pm.h"
 #include "IR_Demod.h"
 #include "UART.h"
+#include "math.h"
 
-#define SIGNAL       				(*((volatile unsigned long *)0x40004030))
+#define SIGNAL       				(*((volatile unsigned long *)0x40024030))
 #define LIGHT 							(*((volatile unsigned long *)0x40025038))
 #define RED 		0x02; 
 #define BLUE 		0x04; 
@@ -32,6 +33,7 @@ int packetArray[1050];
 int arrayFull = 0; 
 int packet_array_element; 
 int done=0; 
+int device_number = 0; //default device 0
 
 void PORTF_Init(void);
 void Timer0_Init(void); 
@@ -50,6 +52,7 @@ void OutCRLF(void){
 
 int main(void){
 	unsigned int k ;
+	
 	PLL_Init(4);
 	SysTick_Init(80000000/256/frequency); // Clk / sine wave steps / desired frequency
 	Init_PortB();
@@ -63,9 +66,10 @@ int main(void){
 	
 	UART_OutChar('a'); 
 	OutCRLF(); 
-	
+	//SIGNAL = RED; // default device 1
 	
   while(1){		
+		
 		if(done){
 			for(k=0; k<5;k++){
 				UART_OutUDec(packet[k]);
@@ -73,6 +77,8 @@ int main(void){
 			OutCRLF(); 
 			done=0; 
 		}
+		
+		
 		
 		
 		// Color    LED(s) PortF
@@ -105,9 +111,21 @@ int main(void){
 			//clear_animation();
 		}
 	}
-  
 }
 
+//used to decode the address in binary to become an int
+int addressBinToDecimal(int *packet){
+	unsigned int place_value; 
+	int answer; 
+	
+	for(place_value=0; place_value<2; place_value++){
+		if(packet[place_value]==1){
+			answer += pow(1,(place_value++)); 
+		}
+		else answer+=pow(0,(place_value++));
+	}
+	return answer; 
+}
 void PORTF_Init(void){      
   SYSCTL_RCGC2_R |= 0x00000020;     // 1) F clock
   GPIO_PORTF_LOCK_R = 0x4C4F434B;   // 2) unlock PortF PF0  
@@ -135,6 +153,23 @@ void PORTF_Init(void){
   NVIC_EN0_R = 0x40000000;      // (h) enable interrupt 30 in NVIC
 }
 
+void GPIOPortF_Handler(void){
+//	if ((GPIO_PORTF_RIS_R & 0x10)){ // sw1 is pressed
+//		GPIO_PORTF_ICR_R = 0x10;
+//		if (LIGHT==0x08) {
+//			LIGHT = WHITE;
+//			device_number = 3; 
+//		}
+//		else if (LIGHT==0x0E){
+//			LIGHT=RED;
+//			device_number = 0; 
+//		}
+//		else  {
+//			LIGHT = LIGHT << 1; 
+//			device_number +=1; 
+//		}
+//	}
+}
 
 // interrupt checks to see the start of the decoding
 void GPIOPortA_Handler(void){
@@ -196,8 +231,8 @@ int checkStartPulse(){
 	 done = 1;
 	 firstTime=0; 
 	 UART_OutString("DONE FLAG: "); UART_OutUDec(done); OutCRLF(); 
-	 	for(k=0; k<5;k++){
-				UART_OutUDec(packet[k]);
+	 	for(k=0; k<1050;k++){
+				UART_OutUDec(packetArray[k]);
 			}
 			OutCRLF(); 
  }
