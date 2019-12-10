@@ -22,7 +22,7 @@
 int frequency = 262;
 int running = 0; 
 int startPulseDetected =0; 
-int  packet[5] = {-1,-1,-1,-1,-1}; // array to hold 1 or 0
+int  packet[5] = {0,0,-1,-1,-1}; // array to hold 1 or 0
 int new_packet = 0;
 unsigned long packet_element = 0; 
 unsigned long loop_0,loop_1=0; 
@@ -33,11 +33,17 @@ int arrayFull = 0;
 int packet_array_element; 
 int done=0; 
 int current_device_number = 0; //default device 0
+int previous_current_device_number = 0; //default device 0
+int status, last_status = 0;
+int input_device_number = 0;
+int isSameDevice=0; 
+int is_setup;
 
 void PORTF_Init(void);
 void Timer0_Init(void); 
 
 int checkStartPulse(void); 
+int isSameDeviceNum(void);
 void decodePacket(void); 
 int addressBinToDecimal(int *packet); 
 
@@ -52,7 +58,8 @@ void OutCRLF(void){
 
 int main(void){
 	unsigned int k ;
-	unsigned int input_device_number; 
+//	int input_device_number = 0;
+	int previous_input_device_number = 0;	
 	
 	PLL_Init(4);
 	SysTick_Init(80000000/256/frequency); // Clk / sine wave steps / desired frequency
@@ -70,6 +77,7 @@ int main(void){
 	LIGHT = RED; // default device 1
 	
   while(1){		
+		/*
 		if(done){
 		input_device_number = addressBinToDecimal(packet); 
 		UART_OutString("Address to decimal: "); UART_OutUDec(input_device_number); OutCRLF(); 
@@ -79,8 +87,18 @@ int main(void){
 			OutCRLF(); 
 			done=0; 
 		}
+		*/
 	
+		// Capture packet
+		input_device_number = addressBinToDecimal(packet); 
 		
+		/*
+		if (current_device_number == 0) previous_current_device_number = 0;
+		else if (current_device_number == 1) previous_current_device_number = 1;
+		else if (current_device_number  == 2) previous_current_device_number  = 2;
+		else if (current_device_number  == 3) previous_current_device_number  = 3;
+		//else current_device_number  = previous_current_device_number ;
+		*/
 		// Color    LED(s) PortF
 		// dark     ---    0
 		// red      R--    0x02
@@ -91,28 +109,46 @@ int main(void){
 		// white    RGB    0x0E
 		// pink     R-B    0x06
 		
+		//UART_OutUDec(input_device_number);
+		//UART_OutUDec(current_device_number);
+		//OutCRLF();
+		
 		if(input_device_number==current_device_number){
-			if (packet[0]==0 && packet[1]==0 && packet[2]== 0 && packet[3]==0 && packet[4] == 0){
-				walking_animation();
+			if (packet[2]== 0 && packet[3]==0 && packet[4] == 0){
+				walking_animation(is_setup);
+				is_setup = 1;
+				previous_current_device_number  = 0;
 				//GPIO_PORTF_DATA_R = 0x0A;
 			}
-			else if (packet[0]==0 && packet[1]==0 && packet[2]== 0 && packet[3]==0 && packet[4] == 1){
-				walking_backwards_animation();
+			else if (packet[2]== 0 && packet[3]==0 && packet[4] == 1){
+				walking_backwards_animation(is_setup);
+				is_setup = 1;
+				previous_current_device_number  = 1;
 				//GPIO_PORTF_DATA_R = 0x0E; //white
 				}
-			else if (packet[0]==0 && packet[1]==0 && packet[2]== 0 && packet[3]==1 && packet[4] == 0){
-				running_animation();
+			else if (packet[2]== 0 && packet[3]==1 && packet[4] == 0){
+				running_animation(is_setup);
+				is_setup = 1;
+				previous_current_device_number  = 2;
 				//GPIO_PORTF_DATA_R = 0x06; //pink
 			}
-			else if (packet[0]==0 && packet[1]==0 && packet[2]== 0 && packet[3]==1 && packet[4] == 1){
+			else if (packet[2]== 0 && packet[3]==1 && packet[4] == 1){
 				//GPIO_PORTF_DATA_R = 0x0C; // skyblue
-				running_backwards_animation();
+				previous_current_device_number  = 3;
+				is_setup = 1;
+				running_backwards_animation(is_setup);
 			}
 			else{
 				//GPIO_PORTF_DATA_R = 0x00;
 				clear_animation();
-				}
 			}
+		}
+		else{
+			if (previous_current_device_number  == 0) {walking_animation(is_setup); is_setup = 1;}
+			if (previous_current_device_number  == 1) {walking_backwards_animation(is_setup); is_setup = 1;}
+			if (previous_current_device_number  == 2) {running_animation(is_setup); is_setup = 1;}
+			if (previous_current_device_number  == 3) {running_backwards_animation(is_setup); is_setup = 1;}
+		}
 	}
 }
 
@@ -185,14 +221,23 @@ void GPIOPortF_Handler(void){
 void GPIOPortE_Handler(void){
 	if (GPIO_PORTE_RIS_R & 0x04){ // sw1 is pressed
 		GPIO_PORTE_ICR_R = 0x04; // clear flag
-		GPIO_PORTF_DATA_R = 0x08; 
+		//GPIO_PORTF_DATA_R = 0x08; 
 		if (running==0&&firstTime==0){
 			running = 1; 
 			firstTime=1; 
-			packet_element=0; 
+			packet_element=0;
+			is_setup = 0;
 		}
 	}
 	
+}
+
+int isSameDeviceNum(void){
+	input_device_number = addressBinToDecimal(packet); 
+	if (current_device_number!=input_device_number){
+		return 0; 
+	}
+	else return 1; 
 }
 
 int checkStartPulse(){
@@ -268,13 +313,53 @@ void Timer0A_Handler(){//called every 100 us
 		testingFlag = 1; 
 		arrayFull=1; 
 		startPulseDetected = checkStartPulse(); 
+		isSameDevice = isSameDeviceNum(); 
 	}
 	
-	if(startPulseDetected){
+	if(startPulseDetected){// && isSameDeviceNum()){
 		decodePacket(); 
 	}
-	
-	
-	  
 }
 
+/*
+unsigned long frequency_count = 0;
+extern int packet[5];
+void SysTick_Handler(){
+	frequency_count++;
+	
+	if(input_device_number==current_device_number){
+			if (packet[2]== 1 && packet[3]==0 && packet[4] == 0){
+				sineWave(frequency_count);
+				previous_current_device_number  = 4;
+				//GPIO_PORTF_DATA_R = 0x0A;
+			}
+			else if (packet[2]== 1 && packet[3]==0 && packet[4] == 1){
+				squareWave(frequency_count);
+				previous_current_device_number  = 5;
+				//GPIO_PORTF_DATA_R = 0x0E; //white
+				}
+			else if (packet[2]== 1 && packet[3]==1 && packet[4] == 0){
+				triangleWave(frequency_count);
+				previous_current_device_number  = 6;
+				//GPIO_PORTF_DATA_R = 0x06; //pink
+			}
+			else if (packet[2]== 1 && packet[3]==1 && packet[4] == 1){
+				//GPIO_PORTF_DATA_R = 0x0C; // skyblue
+				previous_current_device_number  = 7;
+				sawtoothWave(frequency_count);
+			}
+			else{
+				//GPIO_PORTF_DATA_R = 0x00;
+				clear_animation();
+			}
+		}
+	else{
+		if (previous_current_device_number  == 4) sineWave(frequency_count);
+		if (previous_current_device_number  == 5) squareWave(frequency_count);
+		if (previous_current_device_number  == 6) triangleWave(frequency_count);
+		if (previous_current_device_number  == 7) sawtoothWave(frequency_count);
+	}
+	
+	if (frequency_count == 255) frequency_count = 0;
+}
+*/

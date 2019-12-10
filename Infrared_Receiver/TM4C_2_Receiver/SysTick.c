@@ -64,27 +64,45 @@ void SysTick_Wait10ms(uint32_t delay){
 
 unsigned long frequency_count = 0;
 extern int packet[5];
+extern int input_device_number, current_device_number, previous_current_device_number;
 void SysTick_Handler(){
 	frequency_count++;
 	
-	if (packet[0]==0 && packet[1]==0 && packet[2]== 1 && packet[3]==0 && packet[4] == 0){
-		sineWave(frequency_count);
-	}
-	else if (packet[0]==0 && packet[1]==0 && packet[2]== 1 && packet[3]==0 && packet[4] == 1){
-		
-		squareWave(frequency_count);
-	}
-	else if (packet[0]==0 && packet[1]==0 && packet[2]== 1 && packet[3]==1 && packet[4] == 0){
-		triangleWave(frequency_count);
-	}
-	else if (packet[0]==0 && packet[1]==0 && packet[2]== 1 && packet[3]==1 && packet[4] == 1){
-		sawtoothWave(frequency_count);
-	}
+	if(input_device_number==current_device_number){
+			if (packet[2]== 1 && packet[3]==0 && packet[4] == 0){
+				sineWave(frequency_count);
+				previous_current_device_number  = 4;
+				//GPIO_PORTF_DATA_R = 0x0A;
+			}
+			else if (packet[2]== 1 && packet[3]==0 && packet[4] == 1){
+				squareWave(frequency_count);
+				previous_current_device_number  = 5;
+				//GPIO_PORTF_DATA_R = 0x0E; //white
+				}
+			else if (packet[2]== 1 && packet[3]==1 && packet[4] == 0){
+				triangleWave(frequency_count);
+				previous_current_device_number  = 6;
+				//GPIO_PORTF_DATA_R = 0x06; //pink
+			}
+			else if (packet[2]== 1 && packet[3]==1 && packet[4] == 1){
+				//GPIO_PORTF_DATA_R = 0x0C; // skyblue
+				previous_current_device_number  = 7;
+				sawtoothWave(frequency_count);
+			}
+			else{
+				//GPIO_PORTF_DATA_R = 0x00;
+				clearWave();
+			}
+		}
 	else{
-		clearWave();
+		if (previous_current_device_number  == 4) sineWave(frequency_count);
+		if (previous_current_device_number  == 5) squareWave(frequency_count);
+		if (previous_current_device_number  == 6) triangleWave(frequency_count);
+		if (previous_current_device_number  == 7) sawtoothWave(frequency_count);
 	}
 	
 	if (frequency_count == 255) frequency_count = 0;
 }
+
 
 

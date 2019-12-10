@@ -19,7 +19,7 @@
  Outputs: none
 */
 
-int is_setup = 0;
+extern int is_setup;
 uint32_t x = 40, ht = 0;	
 int32_t l = 15, h = 15;
 int j;
@@ -45,10 +45,10 @@ void DelayWait10ms(uint32_t n){
   }
 }
 
-void walking_animation(void){
+void walking_animation(int is_setup){
 	
 	if (!is_setup){
-		
+		ST7735_FillScreen(ST7735_BLACK);
 		// DRAW THE GROUND
 		ST7735_FillScreen(ST7735_CYAN);
 		ST7735_FillRect(0, 150,128, 30, ST7735_GREEN);
@@ -213,10 +213,10 @@ void clear_animation(void){
 
 
 
-void walking_backwards_animation(void){
+void walking_backwards_animation(int is_setup){
 	
 	if (!is_setup){
-		
+		ST7735_FillScreen(ST7735_BLACK);
 		// DRAW THE GROUND
 		ST7735_FillScreen(ST7735_CYAN);
 		ST7735_FillRect(0, 150,128, 30, ST7735_GREEN);
@@ -261,10 +261,10 @@ void walking_backwards_animation(void){
 
 
 
-void running_backwards_animation(void){
+void running_backwards_animation(int is_setup){
 	
 	if (!is_setup){
-		
+		ST7735_FillScreen(ST7735_BLACK);
 		// DRAW THE GROUND
 		ST7735_FillScreen(ST7735_CYAN);
 		ST7735_FillRect(0, 150,128, 30, ST7735_GREEN);
@@ -308,10 +308,10 @@ void running_backwards_animation(void){
 }
 
 
-void running_animation(void){
+void running_animation(int is_setup){
 	
 	if (!is_setup){
-		
+		ST7735_FillScreen(ST7735_BLACK);
 		// DRAW THE GROUND
 		ST7735_FillScreen(ST7735_CYAN);
 		ST7735_FillRect(0, 150,128, 30, ST7735_GREEN);
